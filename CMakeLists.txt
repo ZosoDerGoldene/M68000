@@ -3,7 +3,6 @@ project(M68000)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_subdirectory(test)
 
 add_executable(M68000
     main.cpp
@@ -28,3 +27,4 @@ add_executable(M68000
         src/cpu/instructions/generate/binary_instruction.h
 )
 
+add_subdirectory(test)
