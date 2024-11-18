@@ -4,7 +4,25 @@
 
 #include <iostream>
 
-int main() {
-  std::cout << "Hello World!" << std::endl;
+#include "src/cpu/cpu.h"
+#include "src/memory/memory.h"
+#include "src/cpu/instructions/instructions.h"
+
+[[noreturn]] int main() {
+  std::cout << "Hello Amiga!" << std::endl;
+  memory::memory mem;
+  memory::amiga_500::a500_layout l(8,0,0);
+  mem.reserve(l);
+  cpu::instructions::instructions_t instructions;
+  cpu::instructions::instructions::generate_instructions(instructions);
+  cpu::cpu m68000(mem);
+  m68000.reset();
+  cpu::execution_context ctx(m68000, mem);
+  while (true) {
+    const opcode_t next_opcode = ctx._cpu.pc().get_next_opcode();
+    instructions[next_opcode](ctx); // TODO: This currently crashes, as there is not function to handel opcode 0
+  }
+
+
   return 0;
 }
