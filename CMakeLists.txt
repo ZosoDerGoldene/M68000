@@ -1,0 +1,30 @@
+cmake_minimum_required(VERSION 3.29)
+project(M68000)
+
+set(CMAKE_CXX_STANDARD 23)
+
+add_subdirectory(test)
+
+add_executable(M68000
+    main.cpp
+        src/types.h
+        src/cpu/execution_properties.h
+        src/cpu/instructions/execute/add_handler.h
+        src/cpu/ea/effective_address.h
+        src/cpu/cpu.cpp
+        src/cpu/cpu.h
+        src/cpu/registers/program_counter.h
+        src/memory/memory.cpp
+        src/memory/memory.h
+        src/memory/memory_bank.h
+        src/memory/layout.cpp
+        src/memory/layout.h
+        src/cpu/registers/registers.h
+        src/cpu/registers/status_register.h
+        src/cpu/instructions/generate/add_generator.h
+        src/cpu/instructions/instructions.cpp
+        src/cpu/instructions/instructions.h
+        src/cpu/instructions/execute/execution_handlers.h
+        src/cpu/instructions/generate/binary_instruction.h
+)
+
