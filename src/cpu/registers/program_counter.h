@@ -36,6 +36,12 @@ namespace cpu::registers {
             return this->_ird;
         }
 
+        inline void prefetch() {
+            this->_offset = 2;
+            this->_ir = this->_irc;
+            this->_irc = _mem.read<opcode_t>(_pc + _offset);
+            this->_ird = this->_ir;
+        }
 
 
     private:
@@ -50,13 +56,6 @@ namespace cpu::registers {
         inline void initial_prefetch() {
             this->_irc = _mem.read<opcode_t>(_pc);
             this->prefetch();
-        }
-
-        inline void prefetch() {
-            this->_offset = 2;
-            this->_ir = this->_irc;
-            this->_irc = _mem.read<opcode_t>(_pc + _offset);
-            this->_ird = this->_ir;
         }
 
         inline void do_prefetch() {

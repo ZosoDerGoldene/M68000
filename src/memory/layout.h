@@ -38,7 +38,6 @@ namespace memory {
 
     namespace amiga_500 {
         struct a500_layout final : public layout {
-
             a500_layout(ram_size_t chip_mem_banks, ram_size_t zorro_ii_banks, ram_size_t slow_fast_banks);
 
             static constexpr min_max chip_mem_min_max = min_max(8, 16);

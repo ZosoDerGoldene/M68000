@@ -36,7 +36,7 @@ namespace memory::amiga_500 {
     }
 
     a500_layout::a500_layout(ram_size_t chip_mem_banks, ram_size_t zorro_ii_banks, ram_size_t slow_fast_banks) :
-    layout(true, ""),
+    layout(true, "/home/zoso/CLionProjects/Amiga Fever/docs/AmigaFiles/Shared/rom/amiga-os-130.rom"),
     _chip_mem_banks(chip_mem_banks), _zorro_ii_banks(zorro_ii_banks), _slow_fast_banks(slow_fast_banks) {
         if (check_size(chip_mem_banks, chip_mem_min_max)) {
             throw std::invalid_argument("a500_layout::_chip_ram_banks");
