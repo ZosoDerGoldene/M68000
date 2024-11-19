@@ -10,6 +10,8 @@ add_executable(run_tests
         mem/mem_bank_test.cpp
         cpu/status_register_test.cpp
         cpu/effective_addressing_mode_test.cpp
+        cpu/instruction/generator/instruction_generator_add_test.cpp
+        cpu/instruction/generator/instruction_generator_add_test.h
         ../src/memory/layout.cpp
         ../src/memory/memory.cpp
 )
