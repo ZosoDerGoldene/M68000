@@ -68,7 +68,7 @@ namespace cpu::instructions {
                 } else {
                     result = do_execute<handler, src_t>(src, cpu);
                 }
-                write_dest<src_mode, src_t, false>(cpu, result);
+                write_dst<src_mode, src_t, false>(cpu, result);
             } else {
                 if constexpr(execute::ignores_source<handler>) {
                     handler::template execute<src_t>(cpu);

@@ -14,5 +14,9 @@ add_executable(run_tests
         cpu/instruction/generator/instruction_generator_add_test.h
         ../src/memory/layout.cpp
         ../src/memory/memory.cpp
+        cpu/instruction/generator/instruction_generator_and_test.cpp
+        cpu/instruction/generator/instruction_generator_and_test.h
+        cpu/instruction/generator/instruction_generator_sub_test.cpp
+        cpu/instruction/generator/instruction_generator_sub_test.h
 )
 target_link_libraries(run_tests gtest gtest_main)

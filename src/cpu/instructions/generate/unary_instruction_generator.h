@@ -39,7 +39,7 @@ namespace cpu::instructions::generate {
                 template<typename handler, typename dest_mode, typename container_t>
                 static inline void get_indices(opcode_t base_opcode, container_t& values) {
                     if constexpr (std::is_same_v<container_t, std::array<opcode_t, 8>>) {
-                        std::array<opcode_t, 8> ms = ea::mode_masks<dest_mode, execute::reverses_src_dst<handler>>();
+                        const std::array<opcode_t, 8> ms = ea::mode_masks<dest_mode, execute::reverses_src_dst<handler>>();
                         for (int i = 0; i < 8; i++) {
                             values[i] = base_opcode | ms[i];
                         }

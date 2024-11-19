@@ -8,16 +8,20 @@
 #include <type_traits>
 
 #include "add_handler.h"
+#include "and_handler.h"
+#include "sub_handler.h"
 
 namespace cpu::instructions::execute {
 
         template<typename handler>
         constexpr bool reverses_src_dst =
-            std::is_same_v<add_ea_handler, handler> || std::is_same_v<addq_handler, handler> ;
-            // || std::is_same_v<sub_ea_handler, handler> ||
-            // std::is_same_v<and_ea_handler, handler> || std::is_same_v<or_ea_handler, handler> ||
+            std::is_same_v<add_ea_handler, handler>
+            || std::is_same_v<addq_handler, handler>
+            || std::is_same_v<subq_handler, handler>
+            || std::is_same_v<sub_ea_handler, handler>
+            || std::is_same_v<and_ea_handler, handler>;
+            //|| std::is_same_v<or_ea_handler, handler> ||
             // std::is_same_v<eor_ea_handler, handler> ||
-            // std::is_same_v<subq_handler, handler> ||
             // std::is_same_v<asx_ea<true>_handler, handler> ||
             // std::is_same_v<asx_ea<false>_handler, handler> ||
             // std::is_same_v<lsx_ea<true>_handler, handler> ||
@@ -33,8 +37,8 @@ namespace cpu::instructions::execute {
         //     (std::is_same_v<moveq_handler, handler>));
         //
         template<typename handler>
-        constexpr bool writes_destination = false;
-        // !(std::is_same_v<andi2ccr_handler, handler> ||
+        constexpr bool writes_destination =
+        !(std::is_same_v<andi2ccr_handler, handler>); // ||
         //     std::is_same_v<eori2ccr_handler, handler> || std::is_same_v<ori2ccr_handler, handler> ||
         //         std::is_same_v<bcc_handler, handler> || std::is_same_v<bsr_handler, handler>);
 
@@ -44,12 +48,13 @@ namespace cpu::instructions::execute {
 
         template<typename handler>
         constexpr bool is_immediate_instruction =
-            std::is_same_v<addi_handler, handler>;
+            std::is_same_v<addi_handler, handler>
             //|| //std::is_same_v<bchg_i_handler, handler> ||
-            // std::is_same_v<andi_handler, handler> || //std::is_same_v<bclr_i_handler, handler> ||
+            || std::is_same_v<andi_handler, handler>
+            // || //std::is_same_v<bclr_i_handler, handler> ||
             // std::is_same_v<eori_handler, handler> || //std::is_same_v<bset_i_handler, handler> ||
             // std::is_same_v<ori_handler, handler> || //std::is_same_v<btst_i_handler, handler> ||
-            // std::is_same_v<subi_handler, handler>;
+            || std::is_same_v<subi_handler, handler>;
 
         template<typename handler>
         constexpr bool is_bit_instruction = false;

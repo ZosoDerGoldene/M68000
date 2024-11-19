@@ -5,11 +5,14 @@
 #ifndef AND_HANDLER_H
 #define AND_HANDLER_H
 
+#include "../../registers/status_register.h"
+#include "../../cpu.h"
+#include "../../ea/effective_address.h"
 namespace cpu::instructions::execute {
-    struct and_ {
+    struct and_handler {
         template<unsigned_integer src_t, unsigned_integer dest_t>
-        static inline dest_t execute(const src_t src, const dest_t dest, execution_context& context) {
-            registers::status_register& sr = context._cpu.sr();
+        static inline dest_t execute(const src_t src, const dest_t dest, cpu& cpu) {
+            registers::status_register& sr = cpu.sr();
             bool zero, negative;
             dest_t result = dest;
             asm ("and %3, %2":
@@ -19,7 +22,7 @@ namespace cpu::instructions::execute {
         }
     };
 
-    struct and_dn : public and_ {
+    struct and_dn_handler : public and_handler {
 
         template<ea::ea_mode mode>
         static constexpr bool is_valid_source = ea::data<mode>;
@@ -28,7 +31,7 @@ namespace cpu::instructions::execute {
         static constexpr bool is_valid_destination = std::same_as<ea::dn, mode>;
     };
 
-    struct and_ea : public and_ {
+    struct and_ea_handler : public and_handler {
 
         template<ea::ea_mode mode>
         static constexpr bool is_valid_source = std::same_as<ea::dn, mode>;
@@ -37,7 +40,7 @@ namespace cpu::instructions::execute {
         static constexpr bool is_valid_destination = ea::memory_alterable<mode>;
     };
 
-    struct andi : public and_ {
+    struct andi_handler : public and_handler {
 
         template<ea::ea_mode mode>
         static constexpr bool is_valid_source = std::same_as<ea::imm, mode>;
@@ -46,10 +49,10 @@ namespace cpu::instructions::execute {
         static constexpr bool is_valid_destination = ea::data_alterable<mode>;
     };
 
-    struct andi2ccr {
+    struct andi2ccr_handler {
         template<unsigned_integer src_t>
-        static inline void execute(const src_t src, execution_context& context) {
-            registers::status_register& sr = context._cpu.sr();
+        static inline void execute(const src_t src, cpu& cpu) {
+            registers::status_register& sr = cpu.sr();
             sr.template set_cc<true>(sr.get_cc() & src);
         }
     };
