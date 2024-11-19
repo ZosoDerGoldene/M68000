@@ -25,22 +25,22 @@ namespace cpu::instructions::generate {
             binary_instruction_generator::generate_all_sizes<execute::add_ea_handler>(instructions, OPCODE_ADD_EA);
         }
         
-        static void build_adda(instructions_t& instructions) {
+        static void generate_adda(instructions_t& instructions) {
             binary_instruction_generator::generate<execute::adda_handler, word_t, word_t>(instructions, OPCODE_ADDA_W);
             binary_instruction_generator::generate<execute::adda_handler, long_t, long_t>(instructions, OPCODE_ADDA_L);
         }
 
-        static void build_addi(instructions_t& instructions) {
+        static void generate_addi(instructions_t& instructions) {
             binary_instruction_generator::generate_all_sizes<execute::addi_handler>(instructions, OPCODE_ADDI);
         }
 
-        static void build_addq(instructions_t &instructions) {
+        static void generate_addq(instructions_t &instructions) {
             for (opcode_t i = 0; i < 8; i++) {
                 unary_instruction_generator::generate_all_sizes<execute::addq_handler>(instructions, OPCODE_ADDQ | (i << 9));
             }
         }
 
-        static void build_addx(instructions_t& instructions) {
+        static void generate_addx(instructions_t& instructions) {
             x_instruction_generator::generate<execute::addx_handler>(instructions, OPCODE_ADDX);
         }
     };
