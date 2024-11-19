@@ -27,6 +27,7 @@ add_executable(M68000
         src/cpu/instructions/generate/binary_instruction_generator.h
         src/cpu/instructions/generate/x_instrcution_generator.h
         src/cpu/instructions/generate/unary_instruction_generator.h
+        src/cpu/instructions/execute/and_handler.h
 )
 
 add_subdirectory(test)
