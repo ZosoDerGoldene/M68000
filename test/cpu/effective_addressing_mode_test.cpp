@@ -7,41 +7,39 @@
 #include "../../src/memory/layout.h"
 
 struct ea_mode : public ::testing::Test {
-    ea_mode() : _cpu(cpu::cpu(_mem)), _layout(8, 0, 0), _ctx(_cpu, _mem, 0) {
+    ea_mode() : _cpu(cpu::cpu(_mem)), _layout(8, 0, 0) {
         _mem.reserve(_layout);
     }
 protected:
     memory::memory _mem;
     cpu::cpu _cpu;
-    memory::amiga_500::a500_layout _layout;
-    cpu::execution_context _ctx;
+    memory::amiga_500::a500_layout _layout; 
 };
 
 struct ea_mode_68020 : public ::testing::Test {
-    ea_mode_68020() : _cpu(cpu::cpu(_mem)), _layout(8, 0, 0), _ctx(_cpu, _mem, 0) {
+    ea_mode_68020() : _cpu(cpu::cpu(_mem)), _layout(8, 0, 0) {
         _mem.reserve(_layout);
     }
 protected:
     memory::memory _mem;
     cpu::cpu _cpu;
-    memory::amiga_500::a500_layout _layout;
-    cpu::execution_context _ctx;
+    memory::amiga_500::a500_layout _layout; 
 };
 
 TEST_F(ea_mode, d4) {
     cpu::ea::dn d4(4);
-    d4.template write<long_t>(_ctx, 0x12345678);
-    ASSERT_EQ(d4.read<byte_t>(_ctx), 0x78);
-    ASSERT_EQ(d4.read<word_t>(_ctx), 0x5678);
-    ASSERT_EQ(d4.read<long_t>(_ctx), 0x12345678);
+    d4.template write<long_t>(_cpu, 0x12345678);
+    ASSERT_EQ(d4.read<byte_t>(_cpu), 0x78);
+    ASSERT_EQ(d4.read<word_t>(_cpu), 0x5678);
+    ASSERT_EQ(d4.read<long_t>(_cpu), 0x12345678);
 }
 
 TEST_F(ea_mode, a4) {
     cpu::ea::an a4(4);
-    a4.template write<long_t>(_ctx, 0x12345678);
+    a4.template write<long_t>(_cpu, 0x12345678);
     // byte_t is not possible as we compile with -Wall -Werror
-    ASSERT_EQ(a4.read<word_t>(_ctx), 0x5678);
-    ASSERT_EQ(a4.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4.read<word_t>(_cpu), 0x5678);
+    ASSERT_EQ(a4.read<long_t>(_cpu), 0x12345678);
 }
 
 #ifndef NDEBUG
@@ -49,22 +47,22 @@ TEST_F(ea_mode, a4_ind) {
     _cpu.a(4) = 0x100;
     _mem.write<long_t>(0x100, 0x12345678);
     cpu::ea::an_ind a4(4);
-    ASSERT_EQ(a4.read<byte_t>(_ctx), 0x12);
-    ASSERT_EQ(a4.read<word_t>(_ctx), 0x1234);
-    ASSERT_EQ(a4.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4.read<byte_t>(_cpu), 0x12);
+    ASSERT_EQ(a4.read<word_t>(_cpu), 0x1234);
+    ASSERT_EQ(a4.read<long_t>(_cpu), 0x12345678);
 }
 
 TEST_F(ea_mode, a4_ind_post_incr) {
     _cpu.a(4) = 0x100;
     _mem.write<long_t>(0x100, 0x12345678);
     cpu::ea::an_ind_post_incr a4(4);
-    ASSERT_EQ(a4.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4.read<long_t>(_cpu), 0x12345678);
     ASSERT_EQ(_cpu.a(4).l(), 0x104);
     _cpu.a(4) = 0x100;
-    ASSERT_EQ(a4.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4.read<word_t>(_cpu), 0x1234);
     ASSERT_EQ(_cpu.a(4).l(), 0x102);
     _cpu.a(4) = 0x100;
-    ASSERT_EQ(a4.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4.read<byte_t>(_cpu), 0x12);
     ASSERT_EQ(_cpu.a(4).l(), 0x101);
 }
 
@@ -72,13 +70,13 @@ TEST_F(ea_mode, a4_ind_pre_decr) {
     _cpu.a(4) = 0x104;
     _mem.write<long_t>(0x100, 0x12345678);
     cpu::ea::an_ind_pre_decr a4(4);
-    ASSERT_EQ(a4.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4.read<long_t>(_cpu), 0x12345678);
     ASSERT_EQ(_cpu.a(4).l(), 0x100);
     _cpu.a(4) = 0x102;
-    ASSERT_EQ(a4.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4.read<word_t>(_cpu), 0x1234);
     ASSERT_EQ(_cpu.a(4).l(), 0x100);
     _cpu.a(4) = 0x101;
-    ASSERT_EQ(a4.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4.read<byte_t>(_cpu), 0x12);
     ASSERT_EQ(_cpu.a(4).l(), 0x100);
 }
 
@@ -86,13 +84,13 @@ TEST_F(ea_mode, a7_ind_post_incr) {
     _cpu.a(7) = 0x100;
     _mem.write<long_t>(0x100, 0x12345678);
     cpu::ea::an_ind_post_incr a7(7);
-    ASSERT_EQ(a7.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a7.read<long_t>(_cpu), 0x12345678);
     ASSERT_EQ(_cpu.a(7).l(), 0x104);
     _cpu.a(7) = 0x100;
-    ASSERT_EQ(a7.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a7.read<word_t>(_cpu), 0x1234);
     ASSERT_EQ(_cpu.a(7).l(), 0x102);
     _cpu.a(7) = 0x100;
-    ASSERT_EQ(a7.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a7.read<byte_t>(_cpu), 0x12);
     ASSERT_EQ(_cpu.a(7).l(), 0x102);
 }
 
@@ -100,13 +98,13 @@ TEST_F(ea_mode, a7_ind_pre_decr) {
     _cpu.a(7) = 0x104;
     _mem.write<long_t>(0x100, 0x12345678);
     cpu::ea::an_ind_pre_decr a7(7);
-    ASSERT_EQ(a7.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a7.read<long_t>(_cpu), 0x12345678);
     ASSERT_EQ(_cpu.a(7).l(), 0x100);
     _cpu.a(7) = 0x102;
-    ASSERT_EQ(a7.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a7.read<word_t>(_cpu), 0x1234);
     ASSERT_EQ(_cpu.a(7).l(), 0x100);
     _cpu.a(7) = 0x102;
-    ASSERT_EQ(a7.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a7.read<byte_t>(_cpu), 0x12);
     ASSERT_EQ(_cpu.a(7).l(), 0x100);
 }
 
@@ -115,13 +113,13 @@ TEST_F(ea_mode, imm) {
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
     cpu::ea::imm imm;
-    ASSERT_EQ(imm.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(imm.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(imm.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(imm.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(imm.read<byte_t>(_ctx), 0x34);
+    ASSERT_EQ(imm.read<byte_t>(_cpu), 0x34);
 }
 
 TEST_F(ea_mode, abs_short) {
@@ -130,13 +128,13 @@ TEST_F(ea_mode, abs_short) {
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
     cpu::ea::abs_short abs;
-    ASSERT_EQ(abs.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(abs.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(abs.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(abs.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(abs.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(abs.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -146,13 +144,13 @@ TEST_F(ea_mode, abs_long) {
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
     cpu::ea::abs_long abs;
-    ASSERT_EQ(abs.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(abs.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(abs.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(abs.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(abs.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(abs.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, an_ind_disp) {
@@ -162,13 +160,13 @@ TEST_F(ea_mode, an_ind_disp) {
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
     cpu::ea::an_ind_disp an_ind_disp(4);
-    ASSERT_EQ(an_ind_disp.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(an_ind_disp.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(an_ind_disp.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(an_ind_disp.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(an_ind_disp.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(an_ind_disp.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, an_ind_neg_disp) {
@@ -178,13 +176,13 @@ TEST_F(ea_mode, an_ind_neg_disp) {
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
     cpu::ea::an_ind_disp an_ind_disp(4);
-    ASSERT_EQ(an_ind_disp.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(an_ind_disp.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(an_ind_disp.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(an_ind_disp.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(an_ind_disp.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(an_ind_disp.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_disp) {
@@ -193,13 +191,13 @@ TEST_F(ea_mode, pc_ind_disp) {
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
     cpu::ea::pc_ind_disp pc_ind_disp;
-    ASSERT_EQ(pc_ind_disp.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_disp.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_disp.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_disp.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_disp.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_disp.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_neg_disp) {
@@ -208,13 +206,13 @@ TEST_F(ea_mode, pc_ind_neg_disp) {
     _cpu.pc().set_pc(0x300);
     _cpu.pc().prefetch();
     cpu::ea::pc_ind_disp pc_ind_disp;
-    ASSERT_EQ(pc_ind_disp.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_disp.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x300);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_disp.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_disp.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x300);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_disp.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_disp.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_a3_w) {
@@ -225,13 +223,13 @@ TEST_F(ea_mode, a4_ind_idx_a3_w) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_a3_l) {
@@ -242,13 +240,13 @@ TEST_F(ea_mode, a4_ind_idx_a3_l) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_d3_w) {
@@ -259,13 +257,13 @@ TEST_F(ea_mode, a4_ind_idx_d3_w) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -277,13 +275,13 @@ TEST_F(ea_mode, a4_ind_idx_d3_l) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_neg_a3_w) {
@@ -294,13 +292,13 @@ TEST_F(ea_mode, a4_ind_idx_neg_a3_w) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_neg_a3_l) {
@@ -311,13 +309,13 @@ TEST_F(ea_mode, a4_ind_idx_neg_a3_l) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_neg_d3_w) {
@@ -328,13 +326,13 @@ TEST_F(ea_mode, a4_ind_idx_neg_d3_w) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -346,13 +344,13 @@ TEST_F(ea_mode, a4_ind_idx_neg_d3_l) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_a3_w_neg_disp) {
@@ -363,13 +361,13 @@ TEST_F(ea_mode, a4_ind_idx_a3_w_neg_disp) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_a3_l_neg_disp) {
@@ -380,13 +378,13 @@ TEST_F(ea_mode, a4_ind_idx_a3_l_neg_disp) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_d3_w_neg_disp) {
@@ -397,13 +395,13 @@ TEST_F(ea_mode, a4_ind_idx_d3_w_neg_disp) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_d3_l_neg_disp) {
@@ -414,13 +412,13 @@ TEST_F(ea_mode, a4_ind_idx_d3_l_neg_disp) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -432,13 +430,13 @@ TEST_F(ea_mode, a4_ind_idx_neg_a3_w_neg_disp) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_neg_a3_l_neg_disp) {
@@ -449,13 +447,13 @@ TEST_F(ea_mode, a4_ind_idx_neg_a3_l_neg_disp) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_neg_d3_w_neg_disp) {
@@ -466,13 +464,13 @@ TEST_F(ea_mode, a4_ind_idx_neg_d3_w_neg_disp) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, a4_ind_idx_neg_d3_l_neg_disp) {
@@ -483,13 +481,13 @@ TEST_F(ea_mode, a4_ind_idx_neg_d3_l_neg_disp) {
     cpu::ea::an_ind_idx<true> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_a3_w) {
@@ -499,13 +497,13 @@ TEST_F(ea_mode, pc_ind_idx_a3_w) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_a3_l) {
@@ -515,13 +513,13 @@ TEST_F(ea_mode, pc_ind_idx_a3_l) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_d3_w) {
@@ -531,13 +529,13 @@ TEST_F(ea_mode, pc_ind_idx_d3_w) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -548,13 +546,13 @@ TEST_F(ea_mode, pc_ind_idx_d3_l) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_neg_a3_w) {
@@ -564,13 +562,13 @@ TEST_F(ea_mode, pc_ind_idx_neg_a3_w) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_neg_a3_l) {
@@ -580,13 +578,13 @@ TEST_F(ea_mode, pc_ind_idx_neg_a3_l) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_neg_d3_w) {
@@ -596,13 +594,13 @@ TEST_F(ea_mode, pc_ind_idx_neg_d3_w) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -613,13 +611,13 @@ TEST_F(ea_mode, pc_ind_idx_neg_d3_l) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_a3_w_neg_disp) {
@@ -629,13 +627,13 @@ TEST_F(ea_mode, pc_ind_idx_a3_w_neg_disp) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_a3_l_neg_disp) {
@@ -645,13 +643,13 @@ TEST_F(ea_mode, pc_ind_idx_a3_l_neg_disp) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_d3_w_neg_disp) {
@@ -661,13 +659,13 @@ TEST_F(ea_mode, pc_ind_idx_d3_w_neg_disp) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_d3_l_neg_disp) {
@@ -677,13 +675,13 @@ TEST_F(ea_mode, pc_ind_idx_d3_l_neg_disp) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -694,13 +692,13 @@ TEST_F(ea_mode, pc_ind_idx_neg_a3_w_neg_disp) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_neg_a3_l_neg_disp) {
@@ -710,13 +708,13 @@ TEST_F(ea_mode, pc_ind_idx_neg_a3_l_neg_disp) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_neg_d3_w_neg_disp) {
@@ -726,13 +724,13 @@ TEST_F(ea_mode, pc_ind_idx_neg_d3_w_neg_disp) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode, pc_ind_idx_neg_d3_l_neg_disp) {
@@ -742,13 +740,13 @@ TEST_F(ea_mode, pc_ind_idx_neg_d3_l_neg_disp) {
     cpu::ea::pc_ind_idx<true> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -760,13 +758,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_w) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_l) {
@@ -777,13 +775,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_l) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_w) {
@@ -794,13 +792,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_w) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -812,13 +810,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_l) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w) {
@@ -829,13 +827,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l) {
@@ -846,13 +844,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w) {
@@ -863,13 +861,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -881,13 +879,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_w_neg_disp) {
@@ -898,13 +896,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_w_neg_disp) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_l_neg_disp) {
@@ -915,13 +913,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_l_neg_disp) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_w_neg_disp) {
@@ -932,13 +930,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_w_neg_disp) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_l_neg_disp) {
@@ -949,13 +947,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_l_neg_disp) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -967,13 +965,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_neg_disp) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_neg_disp) {
@@ -984,13 +982,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_neg_disp) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_neg_disp) {
@@ -1001,13 +999,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_neg_disp) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_neg_disp) {
@@ -1018,13 +1016,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_neg_disp) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_w) {
@@ -1034,13 +1032,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_w) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_l) {
@@ -1050,13 +1048,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_l) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_w) {
@@ -1066,13 +1064,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_w) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1083,13 +1081,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_l) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w) {
@@ -1099,13 +1097,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l) {
@@ -1115,13 +1113,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w) {
@@ -1131,13 +1129,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1148,13 +1146,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_w_neg_disp) {
@@ -1164,13 +1162,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_w_neg_disp) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_l_neg_disp) {
@@ -1180,13 +1178,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_l_neg_disp) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_w_neg_disp) {
@@ -1196,13 +1194,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_w_neg_disp) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_l_neg_disp) {
@@ -1212,13 +1210,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_l_neg_disp) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1229,13 +1227,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_neg_disp) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_neg_disp) {
@@ -1245,13 +1243,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_neg_disp) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_neg_disp) {
@@ -1261,13 +1259,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_neg_disp) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_neg_disp) {
@@ -1277,13 +1275,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_neg_disp) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_w_scale2) {
@@ -1294,13 +1292,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_w_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_l_scale2) {
@@ -1311,13 +1309,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_l_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_w_scale2) {
@@ -1328,13 +1326,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_w_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1346,13 +1344,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_l_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_scale2) {
@@ -1363,13 +1361,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_scale2) {
@@ -1380,13 +1378,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_scale2) {
@@ -1397,13 +1395,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1415,13 +1413,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_w_neg_disp_scale2) {
@@ -1432,13 +1430,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_w_neg_disp_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_l_neg_disp_scale2) {
@@ -1449,13 +1447,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_l_neg_disp_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_w_neg_disp_scale2) {
@@ -1466,13 +1464,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_w_neg_disp_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_l_neg_disp_scale2) {
@@ -1483,13 +1481,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_l_neg_disp_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1501,13 +1499,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_neg_disp_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_neg_disp_scale2) {
@@ -1518,13 +1516,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_neg_disp_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_neg_disp_scale2) {
@@ -1535,13 +1533,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_neg_disp_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_neg_disp_scale2) {
@@ -1552,13 +1550,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_neg_disp_scale2) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_w_scale2) {
@@ -1568,13 +1566,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_w_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_l_scale2) {
@@ -1584,13 +1582,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_l_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_w_scale2) {
@@ -1600,13 +1598,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_w_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1617,13 +1615,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_l_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_scale2) {
@@ -1633,13 +1631,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_scale2) {
@@ -1649,13 +1647,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_scale2) {
@@ -1665,13 +1663,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1682,13 +1680,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_w_neg_disp_scale2) {
@@ -1698,13 +1696,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_w_neg_disp_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_l_neg_disp_scale2) {
@@ -1714,13 +1712,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_l_neg_disp_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_w_neg_disp_scale2) {
@@ -1730,13 +1728,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_w_neg_disp_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_l_neg_disp_scale2) {
@@ -1746,13 +1744,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_l_neg_disp_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1763,13 +1761,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_neg_disp_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_neg_disp_scale2) {
@@ -1779,13 +1777,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_neg_disp_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_neg_disp_scale2) {
@@ -1795,13 +1793,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_neg_disp_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_neg_disp_scale2) {
@@ -1811,13 +1809,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_neg_disp_scale2) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_w_scale4) {
@@ -1828,13 +1826,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_w_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_l_scale4) {
@@ -1845,13 +1843,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_l_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_w_scale4) {
@@ -1862,13 +1860,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_w_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_l_scale4) {
@@ -1879,13 +1877,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_l_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_scale4) {
@@ -1896,13 +1894,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_scale4) {
@@ -1913,13 +1911,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_scale4) {
@@ -1930,13 +1928,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -1948,13 +1946,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_w_neg_disp_scale4) {
@@ -1965,13 +1963,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_w_neg_disp_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_l_neg_disp_scale4) {
@@ -1982,13 +1980,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_l_neg_disp_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_w_neg_disp_scale4) {
@@ -1999,13 +1997,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_w_neg_disp_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_l_neg_disp_scale4) {
@@ -2016,13 +2014,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_l_neg_disp_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_neg_disp_scale4) {
@@ -2033,13 +2031,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_neg_disp_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_neg_disp_scale4) {
@@ -2050,13 +2048,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_neg_disp_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_neg_disp_scale4) {
@@ -2067,13 +2065,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_neg_disp_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_neg_disp_scale4) {
@@ -2084,13 +2082,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_neg_disp_scale4) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_w_scale4) {
@@ -2100,13 +2098,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_w_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_l_scale4) {
@@ -2116,13 +2114,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_l_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_w_scale4) {
@@ -2132,13 +2130,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_w_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -2149,13 +2147,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_l_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_scale4) {
@@ -2165,13 +2163,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_scale4) {
@@ -2181,13 +2179,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_scale4) {
@@ -2197,13 +2195,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -2214,13 +2212,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x400);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_w_neg_disp_scale4) {
@@ -2230,13 +2228,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_w_neg_disp_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_l_neg_disp_scale4) {
@@ -2246,13 +2244,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_l_neg_disp_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_w_neg_disp_scale4) {
@@ -2262,13 +2260,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_w_neg_disp_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_l_neg_disp_scale4) {
@@ -2278,13 +2276,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_l_neg_disp_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -2295,13 +2293,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_neg_disp_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_neg_disp_scale4) {
@@ -2311,13 +2309,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_neg_disp_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_neg_disp_scale4) {
@@ -2327,13 +2325,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_neg_disp_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_neg_disp_scale4) {
@@ -2343,13 +2341,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_neg_disp_scale4) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x600);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_w_scale8) {
@@ -2360,13 +2358,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_w_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_l_scale8) {
@@ -2377,13 +2375,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_l_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_w_scale8) {
@@ -2394,13 +2392,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_w_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_l_scale8) {
@@ -2411,13 +2409,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_l_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_scale8) {
@@ -2428,13 +2426,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_scale8) {
@@ -2445,13 +2443,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_scale8) {
@@ -2462,13 +2460,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -2480,13 +2478,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_w_neg_disp_scale8) {
@@ -2497,13 +2495,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_w_neg_disp_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_a3_l_neg_disp_scale8) {
@@ -2514,13 +2512,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_a3_l_neg_disp_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_w_neg_disp_scale8) {
@@ -2531,13 +2529,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_w_neg_disp_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_d3_l_neg_disp_scale8) {
@@ -2548,13 +2546,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_d3_l_neg_disp_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_neg_disp_scale8) {
@@ -2565,13 +2563,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_w_neg_disp_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_neg_disp_scale8) {
@@ -2582,13 +2580,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_a3_l_neg_disp_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_neg_disp_scale8) {
@@ -2599,13 +2597,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_w_neg_disp_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_neg_disp_scale8) {
@@ -2616,13 +2614,13 @@ TEST_F(ea_mode_68020, a4_ind_idx_neg_d3_l_neg_disp_scale8) {
     cpu::ea::an_ind_idx<false> a4_ind_idx(4);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(a4_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(a4_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(a4_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(a4_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_w_scale8) {
@@ -2632,13 +2630,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_w_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_l_scale8) {
@@ -2648,13 +2646,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_l_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_w_scale8) {
@@ -2664,13 +2662,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_w_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -2681,13 +2679,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_l_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_scale8) {
@@ -2697,13 +2695,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_scale8) {
@@ -2713,13 +2711,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_scale8) {
@@ -2729,13 +2727,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 
@@ -2746,13 +2744,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x800);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_w_neg_disp_scale8) {
@@ -2762,13 +2760,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_w_neg_disp_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_a3_l_neg_disp_scale8) {
@@ -2778,13 +2776,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_a3_l_neg_disp_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_w_neg_disp_scale8) {
@@ -2794,13 +2792,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_w_neg_disp_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_d3_l_neg_disp_scale8) {
@@ -2810,13 +2808,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_d3_l_neg_disp_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0x100);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_neg_disp_scale8) {
@@ -2826,13 +2824,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_w_neg_disp_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_neg_disp_scale8) {
@@ -2842,13 +2840,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_a3_l_neg_disp_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_neg_disp_scale8) {
@@ -2858,13 +2856,13 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_w_neg_disp_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 
 TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_neg_disp_scale8) {
@@ -2874,12 +2872,12 @@ TEST_F(ea_mode_68020, pc_ind_idx_neg_d3_l_neg_disp_scale8) {
     cpu::ea::pc_ind_idx<false> pc_ind_idx;
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<long_t>(_ctx), 0x12345678);
+    ASSERT_EQ(pc_ind_idx.read<long_t>(_cpu), 0x12345678);
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<word_t>(_ctx), 0x1234);
+    ASSERT_EQ(pc_ind_idx.read<word_t>(_cpu), 0x1234);
     _cpu.pc().set_pc(0xa00);
     _cpu.pc().prefetch();
-    ASSERT_EQ(pc_ind_idx.read<byte_t>(_ctx), 0x12);
+    ASSERT_EQ(pc_ind_idx.read<byte_t>(_cpu), 0x12);
 }
 #endif
