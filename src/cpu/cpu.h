@@ -22,21 +22,23 @@ namespace cpu {
         }
 
 
-        registers::data_register& d(const unsigned i) {
+        inline registers::data_register& d(const unsigned i) {
             assert((i & 7) == i);
             return _d[i];
         }
 
-        registers::address_register& a(const unsigned i) {
+        inline registers::address_register& a(const unsigned i) {
             assert((i & 7) == i);
             return _a[i];
         }
 
-        registers::status_register& sr() { return _sr;}
+        inline registers::status_register& sr() { return _sr;}
 
-        registers::program_counter& pc() { return _pc;}
+        inline registers::program_counter& pc() { return _pc;}
 
         inline word_t fetch_extension_word() { return pc().fetch_extension_word();}
+
+        [[nodiscard]] inline memory::memory& get_memory() const {return _mem;}
 
     private:
         registers::data_register _d[8];

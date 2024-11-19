@@ -2,8 +2,8 @@
 // Created by zoso on 11/18/24.
 //
 
-#ifndef BINARY_INSTRUCTION_H
-#define BINARY_INSTRUCTION_H
+#ifndef BINARY_INSTRUCTION_GENERATOR_H
+#define BINARY_INSTRUCTION_GENERATOR_H
 #include <array>
 
 #include "../instructions.h"
@@ -11,7 +11,7 @@
 
 namespace cpu::instructions::generate {
     
-        struct generate_binary_instruction {
+        struct binary_instruction_generator {
         template<typename handler>
         static void generate_all_sizes(instructions_t& instructions, const opcode_t base_opcode) {
             generate<handler, byte_t, byte_t>(instructions, base_opcode);

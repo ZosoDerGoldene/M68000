@@ -17,12 +17,8 @@
   cpu::instructions::instructions::generate_instructions(instructions);
   cpu::cpu m68000(mem);
   m68000.reset();
-  cpu::execution_context ctx(m68000, mem);
   while (true) {
-    const opcode_t next_opcode = ctx._cpu.pc().get_next_opcode();
-    instructions[next_opcode](ctx); // TODO: This currently crashes, as there is not function to handel opcode 0
+    const opcode_t next_opcode = m68000.pc().get_next_opcode();
+    instructions[next_opcode](m68000); // TODO: This currently crashes, as there is not function to handel opcode 0
   }
-
-
-  return 0;
 }

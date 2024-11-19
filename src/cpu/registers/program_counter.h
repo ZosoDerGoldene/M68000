@@ -31,6 +31,10 @@ namespace cpu::registers {
             return old_irc;
         }
 
+        [[nodiscard]] inline opcode_t get_current_opcode() const {
+            return this->_ird;
+        }
+
         inline opcode_t get_next_opcode() {
             this->do_prefetch();
             return this->_ird;

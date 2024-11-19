@@ -2,8 +2,8 @@
 // Created by zoso on 11/18/24.
 //
 
-#ifndef ADD_H
-#define ADD_H
+#ifndef ADD_HANDLER_H
+#define ADD_HANDLER_H
 #include "../../../types.h"
 #include "../../cpu.h"
 #include "../../ea/effective_address.h"
@@ -12,8 +12,8 @@ namespace cpu::instructions::execute {
 
     struct add_handler {
         template<unsigned_integer src_t, unsigned_integer dst_t>
-        static inline dst_t execute(const src_t src, const dst_t dst, execution_context& ctx) {
-            registers::status_register& sr = ctx._cpu.sr();
+        static inline dst_t execute(const src_t src, const dst_t dst, cpu& cpu) {
+            registers::status_register& sr = cpu.sr();
             bool carry, overflow, zero, negative;
             dst_t result = dst;
             asm ("add %5, %4":
@@ -60,14 +60,14 @@ namespace cpu::instructions::execute {
     };
 
     struct addq_handler {
-        template<unsigned_integer dest_t>
-        static inline dest_t execute(dest_t dest, execution_context& context) {
-            registers::status_register& sr = context._cpu.sr();
+        template<unsigned_integer dst_t>
+        static inline dst_t execute(dst_t dst, cpu& cpu) {
+            registers::status_register& sr = cpu.sr();
             bool carry, overflow, zero, negative;
-            dest_t result = dest;
-            dest = static_cast<dest_t>((context._opcode >> 9) & 0x7);
+            dst_t result = dst;
+            dst = static_cast<dst_t>((cpu.pc().get_current_opcode() >> 9) & 0x7);
             asm ("add %5, %4":
-            "=@ccc"(carry), "=@cco"(overflow), "=@ccz"(zero), "=@ccs"(negative), "+r"(result):"r"(dest));
+            "=@ccc"(carry), "=@cco"(overflow), "=@ccz"(zero), "=@ccs"(negative), "+r"(result):"r"(dst));
             sr.template set_cc<true>(carry | (overflow << 1) | (zero << 2) | (negative << 3) | (carry << 4));
             return result;
         }
@@ -78,8 +78,8 @@ namespace cpu::instructions::execute {
 
     struct addx_handler {
         template<unsigned_integer src_t, unsigned_integer dest_t>
-        static inline dest_t execute(const src_t src, const dest_t dest, execution_context& context) {
-            registers::status_register &sr = context._cpu.sr();
+        static inline dest_t execute(const src_t src, const dest_t dest, cpu& cpu) {
+            registers::status_register &sr = cpu.sr();
             bool carry, overflow, zero, negative;
             dest_t result = dest;
             if (sr.x()) {
@@ -94,4 +94,4 @@ namespace cpu::instructions::execute {
         }
     };
 }
-#endif //ADD_H
+#endif //ADD_HANDLER_H

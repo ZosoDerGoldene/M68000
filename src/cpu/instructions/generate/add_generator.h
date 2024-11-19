@@ -4,7 +4,9 @@
 
 #ifndef ADD_GENERATOR_H
 #define ADD_GENERATOR_H
-#include "binary_instruction.h"
+#include "binary_instruction_generator.h"
+#include "unary_instruction_generator.h"
+#include "x_instrcution_generator.h"
 #include "../instructions.h"
 
 namespace cpu::instructions::generate {
@@ -19,27 +21,27 @@ namespace cpu::instructions::generate {
 
     struct add_generator {
         static void generate_add(instructions_t& instructions) {
-            generate_binary_instruction::generate_all_sizes<execute::add_dn_handler>(instructions, OPCODE_ADD_DN);
-            generate_binary_instruction::generate_all_sizes<execute::add_ea_handler>(instructions, OPCODE_ADD_EA);
+            binary_instruction_generator::generate_all_sizes<execute::add_dn_handler>(instructions, OPCODE_ADD_DN);
+            binary_instruction_generator::generate_all_sizes<execute::add_ea_handler>(instructions, OPCODE_ADD_EA);
         }
         
         static void build_adda(instructions_t& instructions) {
-            generate_binary_instruction::generate<execute::adda_handler, word_t, word_t>(instructions, OPCODE_ADDA_W);
-            generate_binary_instruction::generate<execute::adda_handler, long_t, long_t>(instructions, OPCODE_ADDA_L);
+            binary_instruction_generator::generate<execute::adda_handler, word_t, word_t>(instructions, OPCODE_ADDA_W);
+            binary_instruction_generator::generate<execute::adda_handler, long_t, long_t>(instructions, OPCODE_ADDA_L);
         }
 
         static void build_addi(instructions_t& instructions) {
-            generate_binary_instruction::generate_all_sizes<execute::addi_handler>(instructions, OPCODE_ADDI);
+            binary_instruction_generator::generate_all_sizes<execute::addi_handler>(instructions, OPCODE_ADDI);
         }
 
         static void build_addq(instructions_t &instructions) {
             for (opcode_t i = 0; i < 8; i++) {
-                //generate_unary_instruction::generate_all_sizes<execute::addq_handler>(instructions, OPCODE_ADDQ | (i << 9));
+                unary_instruction_generator::generate_all_sizes<execute::addq_handler>(instructions, OPCODE_ADDQ | (i << 9));
             }
         }
 
         static void build_addx(instructions_t& instructions) {
-            //x_instruction::generate<execute::addx_handler>(instructions, OPCODE_ADDX);
+            x_instruction_generator::generate<execute::addx_handler>(instructions, OPCODE_ADDX);
         }
     };
 }

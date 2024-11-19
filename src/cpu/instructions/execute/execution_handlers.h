@@ -13,10 +13,10 @@ namespace cpu::instructions::execute {
 
         template<typename handler>
         constexpr bool reverses_src_dst =
-            std::is_same_v<add_ea_handler, handler>;
+            std::is_same_v<add_ea_handler, handler> || std::is_same_v<addq_handler, handler> ;
             // || std::is_same_v<sub_ea_handler, handler> ||
             // std::is_same_v<and_ea_handler, handler> || std::is_same_v<or_ea_handler, handler> ||
-            // std::is_same_v<eor_ea_handler, handler> || std::is_same_v<addq_handler, handler> ||
+            // std::is_same_v<eor_ea_handler, handler> ||
             // std::is_same_v<subq_handler, handler> ||
             // std::is_same_v<asx_ea<true>_handler, handler> ||
             // std::is_same_v<asx_ea<false>_handler, handler> ||
