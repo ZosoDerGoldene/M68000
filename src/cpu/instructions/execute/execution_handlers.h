@@ -9,6 +9,9 @@
 
 #include "add_handler.h"
 #include "and_handler.h"
+#include "asx_handler.h"
+#include "lsx_handler.h"
+#include "rox_handler.h"
 #include "sub_handler.h"
 
 namespace cpu::instructions::execute {
@@ -19,17 +22,17 @@ namespace cpu::instructions::execute {
             || std::is_same_v<addq_handler, handler>
             || std::is_same_v<subq_handler, handler>
             || std::is_same_v<sub_ea_handler, handler>
-            || std::is_same_v<and_ea_handler, handler>;
+            || std::is_same_v<and_ea_handler, handler>
             //|| std::is_same_v<or_ea_handler, handler> ||
             // std::is_same_v<eor_ea_handler, handler> ||
-            // std::is_same_v<asx_ea<true>_handler, handler> ||
-            // std::is_same_v<asx_ea<false>_handler, handler> ||
-            // std::is_same_v<lsx_ea<true>_handler, handler> ||
-            // std::is_same_v<lsx_ea<false>_handler, handler> ||
-            // std::is_same_v<rox_ea<true, false>_handler, handler> ||
-            // std::is_same_v<rox_ea<false, false>_handler, handler> ||
-            // std::is_same_v<rox_ea<true, true>_handler, handler> ||
-            // std::is_same_v<rox_ea<false, true>_handler, handler>;
+            || std::is_same_v<asx_ea_handler<true>, handler>
+            || std::is_same_v<asx_ea_handler<false>, handler>
+            || std::is_same_v<lsx_ea_handler<true>, handler>
+            || std::is_same_v<lsx_ea_handler<false>, handler>
+            || std::is_same_v<rox_ea_handler<true, false>, handler>
+            || std::is_same_v<rox_ea_handler<false, false>, handler>
+            || std::is_same_v<rox_ea_handler<true, true>, handler>
+            || std::is_same_v<rox_ea_handler<false, true>, handler>;
 
         template<typename handler>
         constexpr bool reads_destination = true;

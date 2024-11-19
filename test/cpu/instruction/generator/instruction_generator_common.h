@@ -2,8 +2,8 @@
 // Created by Benjamin Landorff on 6/24/21.
 //
 
-#ifndef AMIGA_FEVER_INSTRUCTION_GENERATOR_COMMON_H
-#define AMIGA_FEVER_INSTRUCTION_GENERATOR_COMMON_H
+#ifndef INSTRUCTION_GENERATOR_COMMON_H
+#define INSTRUCTION_GENERATOR_COMMON_H
 
 #include "gtest/gtest.h"
 #include "../../../../src/memory/memory.h"
@@ -35,4 +35,4 @@ protected:
     }
 };
 
-#endif //AMIGA_FEVER_INSTRUCTION_GENERATOR_COMMON_H
+#endif //INSTRUCTION_GENERATOR_COMMON_H

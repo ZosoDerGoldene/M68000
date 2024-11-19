@@ -31,6 +31,10 @@ add_executable(M68000
         src/cpu/instructions/generate/and_generator.h
         src/cpu/instructions/execute/sub_handler.h
         src/cpu/instructions/generate/sub_generator.h
+        src/cpu/instructions/generate/shift_rotation_generator.h
+        src/cpu/instructions/execute/asx_handler.h
+        src/cpu/instructions/execute/lsx_handler.h
+        src/cpu/instructions/execute/rox_handler.h
 )
 
 add_subdirectory(test)

@@ -36,41 +36,41 @@ namespace cpu::instructions::generate {
                 }
 
             private:
-                template<typename handler, typename dest_mode, typename container_t>
+                template<typename handler, typename dst_mode, typename container_t>
                 static inline void get_indices(opcode_t base_opcode, container_t& values) {
                     if constexpr (std::is_same_v<container_t, std::array<opcode_t, 8>>) {
-                        const std::array<opcode_t, 8> ms = ea::mode_masks<dest_mode, execute::reverses_src_dst<handler>>();
+                        const std::array<opcode_t, 8> ms = ea::mode_masks<dst_mode, execute::reverses_src_dst<handler>>();
                         for (int i = 0; i < 8; i++) {
                             values[i] = base_opcode | ms[i];
                         }
                     } else {
-                        values[0] = base_opcode | ea::mode_mask<dest_mode, execute::reverses_src_dst<handler>>() ;
+                        values[0] = base_opcode | ea::mode_mask<dst_mode, execute::reverses_src_dst<handler>>() ;
                     }
                 }
 
-                template<typename handler, unsigned_integer dest_t, typename dest_mode, typename container_t>
+                template<typename handler, unsigned_integer dst_t, typename dst_mode, typename container_t>
                 static inline void fill_impl(instructions_t& instructions, const opcode_t base_opcode) {
                     container_t values = container_t();
-                    get_indices<handler, dest_mode, container_t>(base_opcode, values);
+                    get_indices<handler, dst_mode, container_t>(base_opcode, values);
                     for (size_t i = 0; i < values.size(); i++) {
                         instructions[values[i]] = static_cast<instruction_fn>(instructions::execution_wrapper<handler,
-                            dest_t, dest_mode>);
+                            dst_t, dst_mode>);
                     }
                 }
 
-                template<typename handler, unsigned_integer dest_t, typename dest_mode>
+                template<typename handler, unsigned_integer dst_t, typename dst_mode>
                 static inline void fill(instructions_t& instructions, const opcode_t base_opcode) {
-                    if constexpr (ea::register_mode<dest_mode>) {
-                        fill_impl<handler, dest_t, dest_mode, std::array<opcode_t, 8>>(instructions, base_opcode);
+                    if constexpr (ea::register_mode<dst_mode>) {
+                        fill_impl<handler, dst_t, dst_mode, std::array<opcode_t, 8>>(instructions, base_opcode);
                     } else {
-                        fill_impl<handler, dest_t, dest_mode, std::array<opcode_t, 1>>(instructions, base_opcode);
+                        fill_impl<handler, dst_t, dst_mode, std::array<opcode_t, 1>>(instructions, base_opcode);
                     }
                 }
 
-                template< typename handler, unsigned_integer dest_t,typename dest_mode>
-                static inline void generate_impl(instructions_t& instructions, opcode_t base_opcode) {
-                    if constexpr (handler::template is_valid_destination<dest_mode>) {
-                        fill<handler, dest_t, dest_mode>(instructions, base_opcode);
+                template< typename handler, unsigned_integer dst_t,typename dst_mode>
+                static inline void generate_impl(instructions_t& instructions, const opcode_t base_opcode) {
+                    if constexpr (handler::template is_valid_destination<dst_mode>) {
+                        fill<handler, dst_t, dst_mode>(instructions, base_opcode);
                     }
                 }
             };
