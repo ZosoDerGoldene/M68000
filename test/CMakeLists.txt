@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.19)
 project(test)
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 # 'lib' is the folder with Google Test sources
 add_subdirectory(lib)
 include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
@@ -22,5 +22,6 @@ add_executable(run_tests
         cpu/instruction/generator/instruction_generator_shift_rotate_test.cpp
         cpu/instruction/generator/instruction_generator_or_test.h
         cpu/instruction/generator/instruction_generator_or_test.cpp
+        cpu/instruction/generator/instruction_generate_move_test.cpp
 )
 target_link_libraries(run_tests gtest gtest_main)

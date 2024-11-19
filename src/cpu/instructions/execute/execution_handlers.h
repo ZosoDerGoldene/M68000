@@ -11,6 +11,7 @@
 #include "and_handler.h"
 #include "asx_handler.h"
 #include "lsx_handler.h"
+#include "move_handler.h"
 #include "or_handler.h"
 #include "rox_handler.h"
 #include "sub_handler.h"
@@ -36,10 +37,10 @@ namespace cpu::instructions::execute {
             || std::is_same_v<rox_ea_handler<false, true>, handler>;
 
         template<typename handler>
-        constexpr bool reads_destination = true;
-        //     !((std::is_same_v<move_handler, handler>) || (std::is_same_v<movea_handler, handler>) ||
-        //     (std::is_same_v<moveq_handler, handler>));
-        //
+        constexpr bool reads_destination =
+        !((std::is_same_v<move_handler, handler>) || (std::is_same_v<movea_handler, handler>) ||
+        (std::is_same_v<moveq_handler, handler>));
+
         template<typename handler>
         constexpr bool writes_destination =
         !(std::is_same_v<andi2ccr_handler, handler> || std::is_same_v<ori2ccr_handler, handler>) ;
@@ -47,8 +48,7 @@ namespace cpu::instructions::execute {
         //         std::is_same_v<bcc_handler, handler> || std::is_same_v<bsr_handler, handler>);
 
         template<typename handler>
-        constexpr bool ignores_source = false;
-        //     std::is_same_v<moveq_handler, handler>;
+        constexpr bool ignores_source = std::is_same_v<moveq_handler, handler>;
 
         template<typename handler>
         constexpr bool is_immediate_instruction =
