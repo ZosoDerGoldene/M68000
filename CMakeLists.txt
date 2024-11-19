@@ -35,6 +35,8 @@ add_executable(M68000
         src/cpu/instructions/execute/asx_handler.h
         src/cpu/instructions/execute/lsx_handler.h
         src/cpu/instructions/execute/rox_handler.h
+        src/cpu/instructions/execute/or_handler.h
+        src/cpu/instructions/generate/or_generator.h
 )
 
 add_subdirectory(test)
