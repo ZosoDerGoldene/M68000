@@ -6,7 +6,7 @@
 #define ADD_GENERATOR_H
 #include "binary_instruction_generator.h"
 #include "unary_instruction_generator.h"
-#include "x_instrcution_generator.h"
+#include "x_instruction_generator.h"
 #include "../instructions.h"
 
 namespace cpu::instructions::generate {

@@ -5,7 +5,7 @@
 #ifndef ASX_HANDLER_H
 #define ASX_HANDLER_H
 
-#include "../../ea/effective_address.h"
+#include "../../effective_address.h"
 
 namespace cpu::instructions::execute {
     template<bool left>

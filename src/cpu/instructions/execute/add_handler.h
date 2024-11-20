@@ -5,7 +5,7 @@
 #ifndef ADD_HANDLER_H
 #define ADD_HANDLER_H
 #include "../../cpu.h"
-#include "../../ea/effective_address.h"
+#include "../../effective_address.h"
 
 namespace cpu::instructions::execute {
 

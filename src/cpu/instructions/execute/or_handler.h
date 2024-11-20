@@ -5,7 +5,7 @@
 #ifndef OR_HANDLER_H
 #define OR_HANDLER_H
 
-#include "../../ea/effective_address.h"
+#include "../../effective_address.h"
 
 namespace cpu::instructions::execute {
     struct or_handler {

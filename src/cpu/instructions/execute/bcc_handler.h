@@ -5,7 +5,7 @@
 #ifndef BCC_HANDLER_H
 #define BCC_HANDLER_H
 
-#include "../../ea/effective_address.h"
+#include "../../effective_address.h"
 namespace cpu::instructions::execute {
     struct bcc_handler {
         inline static void execute(cpu& cpu) {

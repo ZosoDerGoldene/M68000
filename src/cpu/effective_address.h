@@ -4,8 +4,8 @@
 
 #ifndef EFFECTIVE_ADDRESS_H
 #define EFFECTIVE_ADDRESS_H
-#include "../../types.h"
-#include "../cpu.h"
+#include "../types.h"
+#include "cpu.h"
 
 namespace cpu {
 

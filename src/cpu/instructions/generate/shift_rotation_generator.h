@@ -6,7 +6,7 @@
 #define SHIFT_ROTATION_GENERATOR_H
 
 #include "unary_instruction_generator.h"
-#include "x_instrcution_generator.h"
+#include "x_instruction_generator.h"
 #include "../instructions.h"
 
 namespace cpu::instructions::generate {

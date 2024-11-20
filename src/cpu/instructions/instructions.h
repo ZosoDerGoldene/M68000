@@ -5,7 +5,7 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 #include <functional>
-#include "../ea/effective_address.h"
+#include "../effective_address.h"
 #include "execute/execution_handlers.h"
 
 namespace cpu::instructions {

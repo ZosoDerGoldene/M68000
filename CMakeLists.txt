@@ -9,7 +9,6 @@ add_executable(M68000
         src/types.h
         src/cpu/execution_properties.h
         src/cpu/instructions/execute/add_handler.h
-        src/cpu/ea/effective_address.h
         src/cpu/cpu.cpp
         src/cpu/cpu.h
         src/cpu/registers/program_counter.h
@@ -25,7 +24,7 @@ add_executable(M68000
         src/cpu/instructions/instructions.h
         src/cpu/instructions/execute/execution_handlers.h
         src/cpu/instructions/generate/binary_instruction_generator.h
-        src/cpu/instructions/generate/x_instrcution_generator.h
+        src/cpu/instructions/generate/x_instruction_generator.h
         src/cpu/instructions/generate/unary_instruction_generator.h
         src/cpu/instructions/execute/and_handler.h
         src/cpu/instructions/generate/and_generator.h
@@ -41,6 +40,8 @@ add_executable(M68000
         src/cpu/instructions/generate/move_generator.h
         src/cpu/instructions/execute/bcc_handler.h
         src/cpu/instructions/generate/bcc_generator.h
+        src/cpu/instructions/execute/eor_handler.h
+        src/cpu/effective_address.h
 )
 
 add_subdirectory(test)

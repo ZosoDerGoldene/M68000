@@ -5,7 +5,7 @@
 #ifndef MOVE_HANDLER_H
 #define MOVE_HANDLER_H
 
-#include "../../ea/effective_address.h"
+#include "../../effective_address.h"
 
 namespace cpu::instructions::execute {
     struct move_handler {

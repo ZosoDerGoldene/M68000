@@ -3,7 +3,7 @@
 //
 
 #include "gtest/gtest.h"
-#include "../../src/cpu/ea/effective_address.h"
+#include "../../src/cpu/effective_address.h"
 #include "../../src/memory/layout.h"
 
 struct ea_mode : public ::testing::Test {

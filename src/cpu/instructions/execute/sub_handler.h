@@ -7,7 +7,7 @@
 
 #include "../../registers/status_register.h"
 #include "../../cpu.h"
-#include "../../ea/effective_address.h"
+#include "../../effective_address.h"
 
 namespace cpu::instructions::execute {
     struct sub_handler {
