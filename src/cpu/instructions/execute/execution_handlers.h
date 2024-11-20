@@ -11,6 +11,7 @@
 #include "and_handler.h"
 #include "asx_handler.h"
 #include "bcc_handler.h"
+#include "eor_handler.h"
 #include "lsx_handler.h"
 #include "move_handler.h"
 #include "or_handler.h"
@@ -27,7 +28,7 @@ namespace cpu::instructions::execute {
             || std::is_same_v<sub_ea_handler, handler>
             || std::is_same_v<and_ea_handler, handler>
             || std::is_same_v<or_ea_handler, handler>
-            // std::is_same_v<eor_ea_handler, handler> ||
+            || std::is_same_v<eor_ea_handler, handler>
             || std::is_same_v<asx_ea_handler<true>, handler>
             || std::is_same_v<asx_ea_handler<false>, handler>
             || std::is_same_v<lsx_ea_handler<true>, handler>
@@ -45,7 +46,7 @@ namespace cpu::instructions::execute {
         template<typename handler>
         constexpr bool writes_destination =
         !(std::is_same_v<andi2ccr_handler, handler> || std::is_same_v<ori2ccr_handler, handler>
-        //     std::is_same_v<eori2ccr_handler, handler> ||
+        ||    std::is_same_v<eori2ccr_handler, handler>
         ||         std::is_same_v<bcc_handler, handler> || std::is_same_v<bsr_handler, handler>);
 
         template<typename handler>
@@ -57,7 +58,8 @@ namespace cpu::instructions::execute {
             //|| //std::is_same_v<bchg_i_handler, handler> ||
             || std::is_same_v<andi_handler, handler>
             // || //std::is_same_v<bclr_i_handler, handler> ||
-            // std::is_same_v<eori_handler, handler> || //std::is_same_v<bset_i_handler, handler> ||
+            || std::is_same_v<eori_handler, handler>
+            // //std::is_same_v<bset_i_handler, handler> ||
             || std::is_same_v<ori_handler, handler>
             //  || std::is_same_v<btst_i_handler, handler>
             || std::is_same_v<subi_handler, handler>;

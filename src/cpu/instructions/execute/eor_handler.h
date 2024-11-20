@@ -8,10 +8,10 @@
 #include "../../effective_address.h"
 
 namespace cpu::instructions::execute {
-    struct eor {
+    struct eor_handler {
         template<unsigned_integer src_t, unsigned_integer dest_t>
-        static inline dest_t execute(const src_t src, const dest_t dest, execution_context& context) {
-            registers::status_register& sr = context._cpu.sr();
+        static inline dest_t execute(const src_t src, const dest_t dest, cpu& cpu) {
+            registers::status_register& sr = cpu.sr();
             bool zero, negative;
             dest_t result = dest;
             asm ("xor %3, %2":
@@ -21,7 +21,7 @@ namespace cpu::instructions::execute {
         }
     };
 
-    struct eor_ea : public eor {
+    struct eor_ea_handler : public eor_handler {
 
         template<ea::ea_mode mode>
         static constexpr bool is_valid_source = std::same_as<ea::dn, mode>;
@@ -30,7 +30,7 @@ namespace cpu::instructions::execute {
         static constexpr bool is_valid_destination = ea::data_alterable<mode>;
     };
 
-    struct eori : public eor {
+    struct eori_handler : public eor_handler {
 
         template<ea::ea_mode mode>
         static constexpr bool is_valid_source = std::same_as<ea::imm, mode>;
@@ -39,10 +39,10 @@ namespace cpu::instructions::execute {
         static constexpr bool is_valid_destination = ea::data_alterable<mode>;
     };
 
-    struct eori2ccr {
+    struct eori2ccr_handler {
         template<unsigned_integer src_t>
-        static inline void execute(const src_t src, execution_context& context) {
-            registers::status_register &sr = context._cpu.sr();
+        static inline void execute(const src_t src, cpu& cpu) {
+            registers::status_register &sr = cpu.sr();
             sr.template set_cc<true>(sr.get_cc() ^ src);
         }
     };
