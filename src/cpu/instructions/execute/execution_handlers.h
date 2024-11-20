@@ -10,6 +10,7 @@
 #include "add_handler.h"
 #include "and_handler.h"
 #include "asx_handler.h"
+#include "bcc_handler.h"
 #include "lsx_handler.h"
 #include "move_handler.h"
 #include "or_handler.h"
@@ -43,9 +44,9 @@ namespace cpu::instructions::execute {
 
         template<typename handler>
         constexpr bool writes_destination =
-        !(std::is_same_v<andi2ccr_handler, handler> || std::is_same_v<ori2ccr_handler, handler>) ;
+        !(std::is_same_v<andi2ccr_handler, handler> || std::is_same_v<ori2ccr_handler, handler>
         //     std::is_same_v<eori2ccr_handler, handler> ||
-        //         std::is_same_v<bcc_handler, handler> || std::is_same_v<bsr_handler, handler>);
+        ||         std::is_same_v<bcc_handler, handler> || std::is_same_v<bsr_handler, handler>);
 
         template<typename handler>
         constexpr bool ignores_source = std::is_same_v<moveq_handler, handler>;

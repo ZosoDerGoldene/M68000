@@ -23,5 +23,7 @@ add_executable(run_tests
         cpu/instruction/generator/instruction_generator_or_test.h
         cpu/instruction/generator/instruction_generator_or_test.cpp
         cpu/instruction/generator/instruction_generate_move_test.cpp
+        cpu/instruction/generator/instruction_generator_bcc_test.h
+        cpu/instruction/generator/instruction_generator_bcc_test.cpp
 )
 target_link_libraries(run_tests gtest gtest_main)

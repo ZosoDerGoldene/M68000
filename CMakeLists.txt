@@ -39,6 +39,8 @@ add_executable(M68000
         src/cpu/instructions/generate/or_generator.h
         src/cpu/instructions/execute/move_handler.h
         src/cpu/instructions/generate/move_generator.h
+        src/cpu/instructions/execute/bcc_handler.h
+        src/cpu/instructions/generate/bcc_generator.h
 )
 
 add_subdirectory(test)
