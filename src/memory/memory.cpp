@@ -4,6 +4,8 @@
 
 #include "memory.h"
 #include <cassert>
+#include <fstream>
+
 namespace memory {
        void memory::reserve(const layout& layout) {
            const ram_size_t num_banks = layout.get_num_banks();
@@ -32,13 +34,13 @@ namespace memory {
                 {
                     _rom = std::make_unique<char[]>(size);
                     real_mem_p = _rom.get();
-                    // std::ifstream in_file;
-                    // in_file.open(""
-                    //              , std::ios::binary);
-                    // if (in_file.is_open()) {
-                    //     in_file.read(real_mem_p, 4 * bank_size);
-                    //     in_file.close();
-                    // }
+                    std::ifstream in_file;
+                    in_file.open("/home/zoso/CLionProjects/M68000/the_rom"
+                                 , std::ios::binary);
+                    if (in_file.is_open()) {
+                        in_file.read(real_mem_p, 4 * bank_size);
+                        in_file.close();
+                    }
                 }
                     break;
                 default:

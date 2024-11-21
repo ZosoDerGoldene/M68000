@@ -29,6 +29,7 @@ namespace cpu::instructions::generate {
             generate_asx_ea(instructions);
         }
 
+    private:
         static void generate_asx_dn(instructions_t& instructions) {
             x_instruction_generator::generate<execute::asx_dn_handler<false>, false, false, true>(instructions, OPCODE_BASE | OPCODE_AS | OPCODE_DN2DN);
             x_instruction_generator::generate<execute::asx_dn_handler<true>, false, false, true>(instructions, OPCODE_BASE | OPCODE_AS | OPCODE_DN2DN | OPCODE_LEFT);
@@ -52,6 +53,7 @@ namespace cpu::instructions::generate {
             generate_lsx_ea(instructions);
         }
 
+    private:
         static void generate_lsx_dn(instructions_t& instructions) {
             x_instruction_generator::generate<execute::lsx_dn_handler<false>, false, false, true>(instructions, OPCODE_BASE | OPCODE_LS | OPCODE_DN2DN);
             x_instruction_generator::generate<execute::lsx_dn_handler<true>, false, false, true>(instructions, OPCODE_BASE | OPCODE_LS | OPCODE_DN2DN | OPCODE_LEFT);
@@ -73,6 +75,7 @@ namespace cpu::instructions::generate {
             generate_rox_implicit(instructions);
             generate_rox_ea(instructions);
         }
+    private:
         static void generate_rox_dn(instructions_t& instructions) {
             x_instruction_generator::generate<execute::rox_dn_handler<false, false>, false, false, true>(instructions, OPCODE_BASE | OPCODE_RO | OPCODE_DN2DN);
             x_instruction_generator::generate<execute::rox_dn_handler<true, false>, false, false, true>(instructions, OPCODE_BASE | OPCODE_RO | OPCODE_DN2DN | OPCODE_LEFT);
@@ -94,7 +97,7 @@ namespace cpu::instructions::generate {
             generate_roxx_implicit(instructions);
             generate_roxx_ea(instructions);
         }
-
+    private:
         static void generate_roxx_dn(instructions_t& instructions) {
             x_instruction_generator::generate<execute::rox_dn_handler<false, true>, false, false, true>(instructions, OPCODE_BASE | OPCODE_ROX | OPCODE_DN2DN);
             x_instruction_generator::generate<execute::rox_dn_handler<true, true>, false, false, true>(instructions, OPCODE_BASE | OPCODE_ROX | OPCODE_DN2DN | OPCODE_LEFT);

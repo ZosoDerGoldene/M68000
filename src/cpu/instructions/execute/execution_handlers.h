@@ -11,6 +11,7 @@
 #include "and_handler.h"
 #include "asx_handler.h"
 #include "bcc_handler.h"
+#include "bcd_handler.h"
 #include "eor_handler.h"
 #include "lsx_handler.h"
 #include "move_handler.h"

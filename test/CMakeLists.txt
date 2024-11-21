@@ -14,6 +14,9 @@ add_executable(run_tests
         cpu/instruction/generator/instruction_generator_add_test.h
         ../src/memory/layout.cpp
         ../src/memory/memory.cpp
+        ../src/cpu/instructions/instructions.h
+        ../src/cpu/instructions/instructions.cpp
+        cpu/instruction/generator/instruction_generator_common.h
         cpu/instruction/generator/instruction_generator_and_test.cpp
         cpu/instruction/generator/instruction_generator_and_test.h
         cpu/instruction/generator/instruction_generator_sub_test.cpp
@@ -22,10 +25,15 @@ add_executable(run_tests
         cpu/instruction/generator/instruction_generator_shift_rotate_test.cpp
         cpu/instruction/generator/instruction_generator_or_test.h
         cpu/instruction/generator/instruction_generator_or_test.cpp
-        cpu/instruction/generator/instruction_generate_move_test.cpp
+        cpu/instruction/generator/instruction_generator_move_test.cpp
+        cpu/instruction/generator/instruction_generator_move_test.h
         cpu/instruction/generator/instruction_generator_bcc_test.h
         cpu/instruction/generator/instruction_generator_bcc_test.cpp
-        cpu/instruction/generator/instruction_generate_eor_test.h
-        cpu/instruction/generator/instruction_generate_eor_test.cpp
+        cpu/instruction/generator/instruction_generator_eor_test.h
+        cpu/instruction/generator/instruction_generator_eor_test.cpp
+        cpu/instruction/generator/instruction_generator_bcd_test.h
+        cpu/instruction/generator/instruction_generator_bcd_test.cpp
+        cpu/instruction/generator/instruction_generate_all.cpp
+        cpu/instruction/generator/instruction_generate_all.h
 )
 target_link_libraries(run_tests gtest gtest_main)

@@ -2,7 +2,7 @@
 // Created by Benjamin Landorff on 6/24/21.
 //
 
-#include "instruction_generate_move_test.h"
+#include "instruction_generator_move_test.h"
 
 TEST_F(instruction_building, build_move) {
     clean_instructions();

@@ -43,6 +43,8 @@ add_executable(M68000
         src/cpu/instructions/execute/eor_handler.h
         src/cpu/effective_address.h
         src/cpu/instructions/generate/eor_generator.h
+        src/cpu/instructions/execute/bcd_handler.h
+        src/cpu/instructions/generate/bcd_generator.h
 )
 
 add_subdirectory(test)

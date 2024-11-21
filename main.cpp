@@ -2,6 +2,10 @@
 // Created by zoso on 11/18/24.
 //
 
+// If a "the_rom" Amiga rom file is present, this should be defined
+#define WITH_ROM
+
+
 #include <iostream>
 
 #include "src/cpu/cpu.h"
@@ -19,6 +23,6 @@
   m68000.reset();
   while (true) {
     const opcode_t next_opcode = m68000.pc().get_next_opcode();
-    instructions[next_opcode](m68000); // TODO: This currently crashes, as there is not function to handel opcode 0
+    instructions[next_opcode](m68000); // TODO: This currently crashes, as there is not function to handel lea instructions
   }
 }

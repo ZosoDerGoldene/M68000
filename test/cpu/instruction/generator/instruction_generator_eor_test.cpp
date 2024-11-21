@@ -2,7 +2,7 @@
 // Created by Benjamin Landorff on 6/24/21.
 //
 
-#include "instruction_generate_eor_test.h"
+#include "instruction_generator_eor_test.h"
 TEST_F(instruction_building, build_eor) {
     clean_instructions();
     counter_t before = instructions_count();
