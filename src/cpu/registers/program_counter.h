@@ -19,7 +19,6 @@ namespace cpu::registers {
         [[nodiscard]] inline address_t get_next_pc() const { return this->_pc + this->_offset;}
 
         inline void add_displacement(const long_t displacement) {
-            //this->_pc = (this->_pc + this->_offset + this->_offset+displacement) & this->_mem.get_mask();
             this->_pc = (this->_pc + displacement) & this->_mem.get_mask();
             this->prefetch();
             this->prefetch();

@@ -22,6 +22,9 @@
   cpu::cpu m68000(mem);
   m68000.reset();
   while (true) {
+    if (m68000.pc().get_pc() == 16515298) {
+        std::cout << "Gotcha!" << std::endl;
+    }
     const opcode_t next_opcode = m68000.pc().get_next_opcode();
     instructions[next_opcode](m68000); // TODO: This currently crashes, as there is not function to handel lea instructions
   }

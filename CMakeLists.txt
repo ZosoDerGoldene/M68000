@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD 20)
 add_executable(M68000
     main.cpp
         src/types.h
-        src/cpu/execution_properties.h
         src/cpu/instructions/execute/add_handler.h
         src/cpu/cpu.cpp
         src/cpu/cpu.h

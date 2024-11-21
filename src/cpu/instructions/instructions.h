@@ -128,7 +128,6 @@ namespace cpu::instructions {
             static inline src_t do_execute(cpu& cpu) {
                 return handler::template execute<src_t>(cpu);
             }
-
     };
 }
 

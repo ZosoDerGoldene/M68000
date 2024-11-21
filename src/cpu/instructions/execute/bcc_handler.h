@@ -10,7 +10,7 @@ namespace cpu::instructions::execute {
     struct bcc_handler {
         inline static void execute(cpu& cpu) {
             if (do_branch(cpu.sr(), cpu.pc().get_current_opcode())) {
-                byte_t displacement = static_cast<byte_t>(cpu.pc().get_current_opcode());
+                const auto displacement = static_cast<byte_t>(cpu.pc().get_current_opcode());
                 cpu.pc().add_displacement(sign_extend(displacement));
             }
         }
@@ -83,7 +83,7 @@ namespace cpu::instructions::execute {
     struct bsr_handler {
         inline static void execute(cpu& cpu) {
             ea::an_ind_pre_decr(7).write(cpu, cpu.pc().get_next_pc());
-            byte_t displacement = static_cast<byte_t>(cpu.pc().get_current_opcode());
+            const auto displacement = static_cast<byte_t>(cpu.pc().get_current_opcode());
             cpu.pc().add_displacement(sign_extend(displacement));
         }
 
