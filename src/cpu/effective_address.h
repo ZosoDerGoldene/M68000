@@ -201,7 +201,7 @@ namespace cpu {
             // going to choke on the "scale" part in the brief extension word.
             template<bool brief_extension_word>
             inline address_t calc_extension_word_address(address_t base_address, cpu& cpu) {
-                word_t extension_word = cpu.fetch_extension_word();
+                const word_t extension_word = cpu.fetch_extension_word();
                 if constexpr (brief_extension_word) {
                     return handle_brief_extension_word<true>(base_address, cpu, extension_word);
                 } else {
@@ -219,7 +219,7 @@ namespace cpu {
         struct dn : public register_based {
             constexpr static opcode_t mask = 0b000;
 
-            explicit dn(opcode_t reg) noexcept : register_based(reg) {}
+            explicit dn(const opcode_t reg) noexcept : register_based(reg) {}
 
             template<typename T>
             inline T read(cpu& cpu) const { return cpu.d(_register). template read<T>();}
@@ -231,7 +231,7 @@ namespace cpu {
         struct an : public register_based {
             constexpr static opcode_t mask = 0b001;
 
-            explicit an(opcode_t reg) noexcept : register_based(reg) {}
+            explicit an(const opcode_t reg) noexcept : register_based(reg) {}
 
             template<typename T>
             inline T read(cpu& cpu) { return cpu.a(_register). template read<T>();}
@@ -243,18 +243,23 @@ namespace cpu {
         struct an_ind : public register_based {
             constexpr static opcode_t mask = 0b010;
 
-            explicit an_ind(opcode_t reg) noexcept : register_based(reg) {}
+            explicit an_ind(const opcode_t reg) noexcept : register_based(reg) {}
 
             template<typename T>
             inline T read(cpu& cpu) {
-                const auto address = cpu.a(_register). template read<address_t>();
+                const auto address = calc_address<T>(cpu);
                 return cpu.get_memory().read<T>(address);
             }
 
             template<typename T>
             inline void write(cpu& cpu, T value) {
-                auto address = cpu.a(_register). template read<address_t>();
+                auto address = calc_address<T>(cpu);
                 return cpu.get_memory().write(address, value);
+            }
+
+            template<typename T>
+            inline address_t calc_address(cpu& cpu) const {
+                return cpu.a(_register). template read<address_t>();
             }
         };
 
@@ -275,7 +280,6 @@ namespace cpu {
                 return cpu.get_memory().write(address, value);
             }
 
-        private:
             template<typename T>
             inline address_t calc_address(cpu& cpu) const {
                 auto address = cpu.a(_register). template read<address_t>();
@@ -295,7 +299,7 @@ namespace cpu {
         struct an_ind_pre_decr : public register_based {
             constexpr static opcode_t mask = 0b100;
 
-            explicit an_ind_pre_decr(opcode_t reg) noexcept : register_based(reg) {}
+            explicit an_ind_pre_decr(const opcode_t reg) noexcept : register_based(reg) {}
 
             template<typename T>
             inline T read(cpu& cpu) {
@@ -309,7 +313,6 @@ namespace cpu {
                 return cpu.get_memory().write(address, value);
             }
 
-        private:
             template<typename T>
             inline address_t calc_address(cpu& cpu) const {
                 auto address = cpu.a(_register).template
@@ -345,7 +348,7 @@ namespace cpu {
                 address_t address = this->calc_address(cpu);
                 return cpu.get_memory().write(address, value);
             }
-        private:
+
             inline address_t calc_address(cpu& c) const {
                 const auto address = c.a(_register). template read<address_t>();
                 const address_t displacement = sign_extend(c.pc().fetch_extension_word());
@@ -389,7 +392,6 @@ namespace cpu {
                 cpu.get_memory(). template write(address, value);
             }
 
-        private:
             static inline address_t calc_address(cpu& c) { return sign_extend<word_t>(c.fetch_extension_word());}
         };
 
@@ -407,7 +409,7 @@ namespace cpu {
                 address_t address = calc_address(cpu);
                 cpu.get_memory(). template write<T>(address, value);
             }
-        private:
+
             static inline address_t calc_address(cpu& c) {
                 return
                 (static_cast<address_t>(c.fetch_extension_word()) << 16) |
@@ -420,9 +422,15 @@ namespace cpu {
 
             template<typename T>
             static inline T read(cpu& cpu) {
+                const address_t address = calc_address<T>(cpu);
+                return cpu.get_memory().template read<T>(address);
+            }
+
+            template<typename T>
+            static inline address_t calc_address(cpu& cpu) {
                 address_t address = cpu.pc().get_pc();
                 address += sign_extend<word_t>(cpu.fetch_extension_word());
-                return cpu.get_memory().template read<T>(address);
+                return address;
             }
         };
 
@@ -432,10 +440,12 @@ namespace cpu {
 
             template<typename T>
             static inline T read(cpu& cpu) {
+                return cpu.get_memory().template read<T>(calc_address<T>);
+            }
+            template<typename T>
+            static inline address_t calc_address(cpu& cpu) {
                 // TODO: Verify whether get_pc() or get_next_pc() is correct
-                const address_t address = calc_extension_word_address<brief_extension_word>(cpu.pc().get_pc(),
-                                                                                            cpu);
-                return cpu.get_memory().template read<T>(address);
+                return calc_extension_word_address<brief_extension_word>(cpu.pc().get_pc(), cpu);
             }
         };
 
