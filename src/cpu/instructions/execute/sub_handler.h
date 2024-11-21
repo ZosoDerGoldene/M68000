@@ -11,11 +11,11 @@
 
 namespace cpu::instructions::execute {
     struct sub_handler {
-                template<unsigned_integer src_t, unsigned_integer dest_t>
-                static inline dest_t execute(const src_t src, const dest_t dest, cpu& cpu) {
+                template<unsigned_integer src_t, unsigned_integer dst_t>
+                static inline dst_t execute(const src_t src, const dst_t dst, cpu& cpu) {
                     registers::status_register &sr = cpu.sr();
                     bool carry, overflow, zero, negative;
-                    dest_t result = dest;
+                    dst_t result = dst;
                     asm ("sub %5,%4":
                     "=@ccc"(carry), "=@cco"(overflow), "=@ccz"(zero), "=@ccs"(negative), "+r"(result):"r"(src));
                     sr.template set_cc<true>(carry | (overflow << 1) | (zero << 2) | (negative << 3) | (carry << 4));
@@ -78,14 +78,14 @@ namespace cpu::instructions::execute {
             };
 
             struct subq_handler {
-                template<unsigned_integer dest_t>
-                static inline dest_t execute(dest_t dest, cpu& cpu) {
+                template<unsigned_integer dst_t>
+                static inline dst_t execute(dst_t dst, cpu& cpu) {
                     registers::status_register& sr = cpu.sr();
                     bool carry, overflow, zero, negative;
-                    dest_t result = dest;
-                    dest = static_cast<dest_t>((cpu.pc().get_current_opcode() >> 9) & 0x7);
+                    dst_t result = dst;
+                    dst = static_cast<dst_t>((cpu.pc().get_current_opcode() >> 9) & 0x7);
                     asm ("sub %5,%4":
-                    "=@ccc"(carry), "=@cco"(overflow), "=@ccz"(zero), "=@ccs"(negative), "+r"(result):"r"(dest));
+                    "=@ccc"(carry), "=@cco"(overflow), "=@ccz"(zero), "=@ccs"(negative), "+r"(result):"r"(dst));
                     sr.template set_cc<true>(carry | (overflow << 1) | (zero << 2) | (negative << 3) | (carry << 4));
                     return result;
                 }

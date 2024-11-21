@@ -45,6 +45,8 @@ add_executable(M68000
         src/cpu/instructions/generate/eor_generator.h
         src/cpu/instructions/execute/bcd_handler.h
         src/cpu/instructions/generate/bcd_generator.h
+        src/cpu/instructions/execute/lea_handler.h
+        src/cpu/instructions/generate/lea_generator.h
 )
 
 add_subdirectory(test)

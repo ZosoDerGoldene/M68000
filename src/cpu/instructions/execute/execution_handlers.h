@@ -13,6 +13,7 @@
 #include "bcc_handler.h"
 #include "bcd_handler.h"
 #include "eor_handler.h"
+#include "lea_handler.h"
 #include "lsx_handler.h"
 #include "move_handler.h"
 #include "or_handler.h"
@@ -52,6 +53,9 @@ namespace cpu::instructions::execute {
 
         template<typename handler>
         constexpr bool ignores_source = std::is_same_v<moveq_handler, handler>;
+
+        template<typename handler>
+        constexpr bool doesnt_read = std::is_same_v<lea_handler, handler>;
 
         template<typename handler>
         constexpr bool is_immediate_instruction =

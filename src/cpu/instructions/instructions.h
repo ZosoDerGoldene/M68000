@@ -36,11 +36,11 @@ namespace cpu::instructions {
             // even if it proves as bad as expected to do this for every instruction,
             // it might be worth doing for some select hotspots
             src_mode s_mode = ea::make_mode<src_mode, !flip>(cpu.pc().get_current_opcode());
-            src_t src = ea::read<src_mode, src_t>(s_mode, cpu);
+            src_t src = ea::read<src_mode, src_t, !execute::doesnt_read<handler>>(s_mode, cpu);
             if constexpr(execute::reads_destination<handler>) {
-                dst_t dest =
+                dst_t dst =
                     read_dst<dst_t, dst_mode, execute::writes_destination<handler>, flip>(cpu);
-                dst_t result = do_execute<handler>(src, dest, cpu);
+                dst_t result = do_execute<handler>(src, dst, cpu);
                 if constexpr (execute::writes_destination<handler>) {
                     write_dst<dst_mode, dst_t, flip>(cpu, result);
                 }
@@ -60,7 +60,7 @@ namespace cpu::instructions {
 
         template<typename handler, unsigned_integer src_t, ea::ea_mode src_mode>
                     static void execution_wrapper(cpu& cpu) {
-            src_t src = read_dst<src_t, src_mode, execute::writes_destination<handler>, false>(cpu);
+            src_t src = read_dst<src_t, src_mode, execute::writes_destination<handler>, execute::reverses_src_dst<handler>>(cpu);
             if constexpr (execute::writes_destination<handler>) {
                 src_t result;
                 if constexpr(execute::ignores_source<handler>) {
@@ -68,7 +68,7 @@ namespace cpu::instructions {
                 } else {
                     result = do_execute<handler, src_t>(src, cpu);
                 }
-                write_dst<src_mode, src_t, false>(cpu, result);
+                write_dst<src_mode, src_t, execute::reverses_src_dst<handler>>(cpu, result);
             } else {
                 if constexpr(execute::ignores_source<handler>) {
                     handler::template execute<src_t>(cpu);

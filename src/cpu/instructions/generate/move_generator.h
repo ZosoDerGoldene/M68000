@@ -11,8 +11,8 @@
 
 namespace cpu::instructions::generate {
     constexpr opcode_t OPCODE_MOVE_B  = 0b0001000000000000;
-    constexpr opcode_t OPCODE_MOVE_W  = 0b0010000000000000;
-    constexpr opcode_t OPCODE_MOVE_L  = 0b0011000000000000;
+    constexpr opcode_t OPCODE_MOVE_W  = 0b0011000000000000;
+    constexpr opcode_t OPCODE_MOVE_L  = 0b0010000000000000;
     constexpr opcode_t OPCODE_MOVEA_W = 0b0011000001000000;   /*
 *                                                                      TODO: Verify the size field for movea is
                                                                 actually switched up from move.w/move.l

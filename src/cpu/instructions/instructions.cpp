@@ -7,12 +7,15 @@
 #include "generate/bcc_generator.h"
 #include "generate/bcd_generator.h"
 #include "generate/eor_generator.h"
+#include "generate/lea_generator.h"
 #include "generate/move_generator.h"
 #include "generate/or_generator.h"
 #include "generate/shift_rotation_generator.h"
-#include "generate/sub_generator.h""
+#include "generate/sub_generator.h"
 
 #include "instructions.h"
+
+
 namespace cpu::instructions {
     void instructions::generate_instructions(instructions_t &instructions) {
         generate::add_generator::generate_add(instructions);
@@ -32,6 +35,7 @@ namespace cpu::instructions {
         generate::eor_generator::generate_eor(instructions);
         generate::eor_generator::generate_eori(instructions);
         generate::eor_generator::generate_eori2ccr(instructions);
+        generate::lea_generator::generate_lea(instructions);
         generate::lsx_generator::generate_lsx(instructions);
         generate::move_generator::generate_move(instructions);
         generate::move_generator::generate_movea(instructions);
