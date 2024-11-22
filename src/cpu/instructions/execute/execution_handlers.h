@@ -23,6 +23,7 @@
 #include "rox_handler.h"
 #include "sub_handler.h"
 #include "swap_handler.h"
+#include "tst_handler.h"
 
 namespace cpu::instructions::execute {
 
@@ -44,7 +45,9 @@ namespace cpu::instructions::execute {
             || std::is_same_v<rox_ea_handler<true, true>, handler>
             || std::is_same_v<rox_ea_handler<false, true>, handler>
             || std::is_same_v<clr_handler, handler>
-            || std::is_same_v<swap_handler, handler>;
+            || std::is_same_v<swap_handler, handler>
+            || std::is_same_v<tst_handler, handler>;
+
 
         template<typename handler>
         constexpr bool reads_destination =

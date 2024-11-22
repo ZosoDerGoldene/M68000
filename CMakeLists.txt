@@ -52,6 +52,8 @@ add_executable(M68000
         src/cpu/instructions/generate/clr_generator.h
         src/cpu/instructions/execute/swap_handler.h
         src/cpu/instructions/generate/swap_generator.h
+        src/cpu/instructions/execute/tst_handler.h
+        src/cpu/instructions/generate/tst_generator.h
 )
 
 add_subdirectory(test)

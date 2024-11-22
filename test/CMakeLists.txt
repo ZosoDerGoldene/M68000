@@ -45,6 +45,8 @@ add_executable(run_tests
         cpu/instruction/generator/instruction_generator_clr_test.h
         cpu/instruction/generator/instruction_generator_swap_test.cpp
         cpu/instruction/generator/instruction_generator_swap_test.h
+        cpu/instruction/generator/instruction_generator_tst_test.cpp
+        cpu/instruction/generator/instruction_generator_tst_test.h
 
 )
 target_link_libraries(run_tests gtest gtest_main)

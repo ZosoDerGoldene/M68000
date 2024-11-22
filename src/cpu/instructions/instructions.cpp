@@ -11,7 +11,7 @@
 #include "generate/eor_generator.h"
 #include "generate/lea_generator.h"
 #include "generate/move_generator.h"
-#include "generate/nop_generator.h""
+#include "generate/nop_generator.h"
 #include "generate/or_generator.h"
 #include "generate/shift_rotation_generator.h"
 #include "generate/sub_generator.h"
@@ -19,6 +19,7 @@
 #include "instructions.h"
 
 #include "generate/swap_generator.h"
+#include "generate/tst_generator.h"
 
 
 namespace cpu::instructions {
@@ -61,6 +62,7 @@ namespace cpu::instructions {
         generate::sub_generator::generate_subq(instructions);
         generate::sub_generator::generate_subx(instructions);
         generate::swap_generator::generate_swap(instructions);
+        generate::tst_generator::generate_tst(instructions);
     }
 
 }
