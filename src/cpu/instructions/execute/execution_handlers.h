@@ -19,6 +19,7 @@
 #include "lsx_handler.h"
 #include "move_handler.h"
 #include "nop_handler.h"
+#include "not_handler.h"
 #include "or_handler.h"
 #include "rox_handler.h"
 #include "sub_handler.h"
@@ -46,7 +47,8 @@ namespace cpu::instructions::execute {
             || std::is_same_v<rox_ea_handler<false, true>, handler>
             || std::is_same_v<clr_handler, handler>
             || std::is_same_v<swap_handler, handler>
-            || std::is_same_v<tst_handler, handler>;
+            || std::is_same_v<tst_handler, handler>
+            || std::is_same_v<not_handler, handler>;
 
 
         template<typename handler>

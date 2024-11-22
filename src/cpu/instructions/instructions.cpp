@@ -12,14 +12,15 @@
 #include "generate/lea_generator.h"
 #include "generate/move_generator.h"
 #include "generate/nop_generator.h"
+#include "generate/not_generator.h"
 #include "generate/or_generator.h"
 #include "generate/shift_rotation_generator.h"
 #include "generate/sub_generator.h"
+#include "generate/swap_generator.h"
+#include "generate/tst_generator.h"
 
 #include "instructions.h"
 
-#include "generate/swap_generator.h"
-#include "generate/tst_generator.h"
 
 
 namespace cpu::instructions {
@@ -51,6 +52,7 @@ namespace cpu::instructions {
         generate::move_generator::generate_movea(instructions);
         generate::move_generator::generate_moveq(instructions);
         generate::nop_generator::generate_nop(instructions);
+        generate::not_generator::generate_not(instructions);
         generate::or_generator::generate_or(instructions);
         generate::or_generator::generate_ori(instructions);
         generate::or_generator::generate_ori2ccr(instructions);
