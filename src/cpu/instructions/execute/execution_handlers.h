@@ -17,6 +17,7 @@
 #include "lea_handler.h"
 #include "lsx_handler.h"
 #include "move_handler.h"
+#include "nop_handler.h"
 #include "or_handler.h"
 #include "rox_handler.h"
 #include "sub_handler.h"

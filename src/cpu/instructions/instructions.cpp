@@ -6,16 +6,17 @@
 #include "generate/and_generator.h"
 #include "generate/bcc_generator.h"
 #include "generate/bcd_generator.h"
+#include "generate/cmp_generator.h"
 #include "generate/eor_generator.h"
 #include "generate/lea_generator.h"
 #include "generate/move_generator.h"
+#include "generate/nop_generator.h""
 #include "generate/or_generator.h"
 #include "generate/shift_rotation_generator.h"
 #include "generate/sub_generator.h"
 
 #include "instructions.h"
 
-#include "generate/cmp_generator.h"
 
 
 namespace cpu::instructions {
@@ -30,6 +31,9 @@ namespace cpu::instructions {
         generate::and_generator::generate_andi2ccr(instructions);
         generate::asx_generator::generate_asx(instructions);
         generate::bcc_generator::generate_bcc(instructions);
+        generate::cmp_generator::generate_cmp(instructions);
+        generate::cmp_generator::generate_cmpa(instructions);
+        generate::cmp_generator::generate_cmpi(instructions);
         generate::bcd_generator::generate_abcd(instructions);
         generate::bcd_generator::generate_sbcd(instructions);
         generate::bcd_generator::generate_pack(instructions);
@@ -42,6 +46,7 @@ namespace cpu::instructions {
         generate::move_generator::generate_move(instructions);
         generate::move_generator::generate_movea(instructions);
         generate::move_generator::generate_moveq(instructions);
+        generate::nop_generator::generate_nop(instructions);
         generate::or_generator::generate_or(instructions);
         generate::or_generator::generate_ori(instructions);
         generate::or_generator::generate_ori2ccr(instructions);
@@ -52,9 +57,6 @@ namespace cpu::instructions {
         generate::sub_generator::generate_subi(instructions);
         generate::sub_generator::generate_subq(instructions);
         generate::sub_generator::generate_subx(instructions);
-        generate::cmp_generator::generate_cmp(instructions);
-        generate::cmp_generator::generate_cmpa(instructions);
-        generate::cmp_generator::generate_cmpi(instructions);
     }
 
 }

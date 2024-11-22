@@ -46,6 +46,8 @@ add_executable(M68000
         src/cpu/instructions/generate/bcd_generator.h
         src/cpu/instructions/execute/lea_handler.h
         src/cpu/instructions/generate/lea_generator.h
+        src/cpu/instructions/generate/nop_generator.h
+        src/cpu/instructions/execute/nop_handler.h
 )
 
 add_subdirectory(test)
