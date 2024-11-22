@@ -4,7 +4,7 @@
 
 #include "instruction_generator_nop_test.h"
 
-TEST_F(instruction_building, generate_nop) {
+TEST_F(instruction_generator, generate_nop) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::nop_generator::generate_nop(_instructions);

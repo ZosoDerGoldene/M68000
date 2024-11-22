@@ -4,7 +4,7 @@
 
 
 #include "instruction_generate_all.h"
-TEST_F(instruction_building, build_all) {
+TEST_F(instruction_generator, build_all) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::instructions::generate_instructions(_instructions);

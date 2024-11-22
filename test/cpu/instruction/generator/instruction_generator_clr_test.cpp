@@ -4,7 +4,7 @@
 
 #include "instruction_generator_clr_test.h"
 
-TEST_F(instruction_building, generate_clr) {
+TEST_F(instruction_generator, generate_clr) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::clr_generator::generate_clr(_instructions);

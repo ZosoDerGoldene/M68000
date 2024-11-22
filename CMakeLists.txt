@@ -50,6 +50,8 @@ add_executable(M68000
         src/cpu/instructions/execute/nop_handler.h
         src/cpu/instructions/execute/clr_handler.h
         src/cpu/instructions/generate/clr_generator.h
+        src/cpu/instructions/execute/swap_handler.h
+        src/cpu/instructions/generate/swap_generator.h
 )
 
 add_subdirectory(test)

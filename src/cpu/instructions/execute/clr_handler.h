@@ -5,7 +5,6 @@
 #ifndef CLR_HANDLER_H
 #define CLR_HANDLER_H
 
-#include "../instructions.h"
 namespace cpu::instructions::execute {
     struct clr_handler {
         template<unsigned_integer src_t>

@@ -4,7 +4,7 @@
 
 #include "instruction_generator_bcc_test.h"
 
-TEST_F(instruction_building, build_bcc) {
+TEST_F(instruction_generator, build_bcc) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::bcc_generator::generate_bcc(_instructions);

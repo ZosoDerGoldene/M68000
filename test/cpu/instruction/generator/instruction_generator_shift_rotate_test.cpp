@@ -4,7 +4,7 @@
 
 #include "instruction_generator_shift_rotate_test.h"
 
-TEST_F(instruction_building, build_asx) {
+TEST_F(instruction_generator, build_asx) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::asx_generator::generate_asx(_instructions);
@@ -12,7 +12,7 @@ TEST_F(instruction_building, build_asx) {
     ASSERT_EQ(after - before, asx_count);
 }
 
-TEST_F(instruction_building, build_lsx) {
+TEST_F(instruction_generator, build_lsx) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::lsx_generator::generate_lsx(_instructions);
@@ -20,7 +20,7 @@ TEST_F(instruction_building, build_lsx) {
     ASSERT_EQ(after - before, lsx_count);
 }
 
-TEST_F(instruction_building, build_rox) {
+TEST_F(instruction_generator, build_rox) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::rox_generator::generate_rox(_instructions);
@@ -29,7 +29,7 @@ TEST_F(instruction_building, build_rox) {
 }
 
 
-TEST_F(instruction_building, build_roxx) {
+TEST_F(instruction_generator, build_roxx) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::roxx_generator::generate_roxx(_instructions);

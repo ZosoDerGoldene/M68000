@@ -4,7 +4,7 @@
 
 #include "instruction_generator_bcd_test.h"
 
-TEST_F(instruction_building, build_abcd) {
+TEST_F(instruction_generator, build_abcd) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::bcd_generator::generate_abcd(_instructions);
@@ -12,7 +12,7 @@ TEST_F(instruction_building, build_abcd) {
     ASSERT_EQ(after - before, abcd_count);
 }
 
-TEST_F(instruction_building, build_pack) {
+TEST_F(instruction_generator, build_pack) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::bcd_generator::generate_pack(_instructions);
@@ -20,7 +20,7 @@ TEST_F(instruction_building, build_pack) {
     ASSERT_EQ(after - before, pack_count);
 }
 
-TEST_F(instruction_building, build_sbcd) {
+TEST_F(instruction_generator, build_sbcd) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::bcd_generator::generate_sbcd(_instructions);
@@ -28,7 +28,7 @@ TEST_F(instruction_building, build_sbcd) {
     ASSERT_EQ(after - before, sbcd_count);
 }
 
-TEST_F(instruction_building, build_unpk) {
+TEST_F(instruction_generator, build_unpk) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::bcd_generator::generate_unpk(_instructions);

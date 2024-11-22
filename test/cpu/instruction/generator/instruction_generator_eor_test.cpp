@@ -3,7 +3,7 @@
 //
 
 #include "instruction_generator_eor_test.h"
-TEST_F(instruction_building, build_eor) {
+TEST_F(instruction_generator, build_eor) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::eor_generator::generate_eor(_instructions);
@@ -11,7 +11,7 @@ TEST_F(instruction_building, build_eor) {
     ASSERT_EQ(after - before, eor_count);
 }
 
-TEST_F(instruction_building, build_eori) {
+TEST_F(instruction_generator, build_eori) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::eor_generator::generate_eori(_instructions);
@@ -19,7 +19,7 @@ TEST_F(instruction_building, build_eori) {
     ASSERT_EQ(after - before, eori_count);
 }
 
-TEST_F(instruction_building, build_eori2ccr) {
+TEST_F(instruction_generator, build_eori2ccr) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::eor_generator::generate_eori2ccr(_instructions);

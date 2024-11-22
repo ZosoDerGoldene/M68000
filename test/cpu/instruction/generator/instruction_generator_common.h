@@ -12,8 +12,8 @@
 #include "../../../../src/cpu/instructions/instructions.h"
 
 using counter_t = unsigned long int;
-struct instruction_building : public ::testing::Test {
-    instruction_building() : _cpu(_mem), _layout(8, 0, 0) {
+struct instruction_generator : public ::testing::Test {
+    instruction_generator() : _cpu(_mem), _layout(8, 0, 0) {
         _mem.reserve(_layout);
     }
 protected:

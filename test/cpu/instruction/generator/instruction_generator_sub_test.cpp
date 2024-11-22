@@ -4,7 +4,7 @@
 
 #include "instruction_generator_sub_test.h"
 
-TEST_F(instruction_building, build_sub) {
+TEST_F(instruction_generator, build_sub) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::sub_generator::generate_sub(_instructions);
@@ -12,7 +12,7 @@ TEST_F(instruction_building, build_sub) {
     ASSERT_EQ(after - before, sub_count);
 }
 
-TEST_F(instruction_building, build_subi) {
+TEST_F(instruction_generator, build_subi) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::sub_generator::generate_subi(_instructions);
@@ -20,7 +20,7 @@ TEST_F(instruction_building, build_subi) {
     ASSERT_EQ(after - before, subi_count);
 }
 
-TEST_F(instruction_building, build_suba) {
+TEST_F(instruction_generator, build_suba) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::sub_generator::generate_suba(_instructions);
@@ -28,7 +28,7 @@ TEST_F(instruction_building, build_suba) {
     ASSERT_EQ(after - before, suba_count);
 }
 
-TEST_F(instruction_building, build_subx) {
+TEST_F(instruction_generator, build_subx) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::sub_generator::generate_subx(_instructions);
@@ -36,7 +36,7 @@ TEST_F(instruction_building, build_subx) {
     ASSERT_EQ(after - before, subx_count);
 }
 
-TEST_F(instruction_building, build_subq) {
+TEST_F(instruction_generator, build_subq) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::sub_generator::generate_subq(_instructions);

@@ -4,7 +4,7 @@
 
 #include "instruction_generator_cmp_test.h"
 
-TEST_F(instruction_building, generate_cmp) {
+TEST_F(instruction_generator, generate_cmp) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::cmp_generator::generate_cmp(_instructions);
@@ -12,7 +12,7 @@ TEST_F(instruction_building, generate_cmp) {
     ASSERT_EQ(after - before, cmp_count);
 }
 
-TEST_F(instruction_building, generate_cmpi) {
+TEST_F(instruction_generator, generate_cmpi) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::cmp_generator::generate_cmpi(_instructions);
@@ -20,7 +20,7 @@ TEST_F(instruction_building, generate_cmpi) {
     ASSERT_EQ(after - before, cmpi_count);
 }
 
-TEST_F(instruction_building, generate_cmpa) {
+TEST_F(instruction_generator, generate_cmpa) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::cmp_generator::generate_cmpa(_instructions);

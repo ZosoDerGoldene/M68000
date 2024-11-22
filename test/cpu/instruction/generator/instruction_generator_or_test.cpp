@@ -4,7 +4,7 @@
 
 #include "instruction_generator_or_test.h"
 
-TEST_F(instruction_building, build_or) {
+TEST_F(instruction_generator, build_or) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::or_generator::generate_or(_instructions);
@@ -12,7 +12,7 @@ TEST_F(instruction_building, build_or) {
     ASSERT_EQ(after - before, or_count);
 }
 
-TEST_F(instruction_building, build_ori) {
+TEST_F(instruction_generator, build_ori) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::or_generator::generate_ori(_instructions);
@@ -20,7 +20,7 @@ TEST_F(instruction_building, build_ori) {
     ASSERT_EQ(after - before, ori_count);
 }
 
-TEST_F(instruction_building, build_ori2ccr) {
+TEST_F(instruction_generator, build_ori2ccr) {
     clean_instructions();
     counter_t before = instructions_count();
     cpu::instructions::generate::or_generator::generate_ori2ccr(_instructions);

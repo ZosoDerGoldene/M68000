@@ -4,7 +4,7 @@
 
 #include "instruction_generator_lea_test.h"
 
-TEST_F(instruction_building, build_lea) {
+TEST_F(instruction_generator, build_lea) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::lea_generator::generate_lea(_instructions);

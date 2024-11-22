@@ -4,7 +4,7 @@
 
 #include "instruction_generator_add_test.h"
 
-TEST_F(instruction_building, generate_add) {
+TEST_F(instruction_generator, generate_add) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::add_generator::generate_add(_instructions);
@@ -12,7 +12,7 @@ TEST_F(instruction_building, generate_add) {
     ASSERT_EQ(after - before, add_count);
 }
 
-TEST_F(instruction_building, generate_adda) {
+TEST_F(instruction_generator, generate_adda) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::add_generator::generate_adda(_instructions);
@@ -20,7 +20,7 @@ TEST_F(instruction_building, generate_adda) {
     ASSERT_EQ(after - before, adda_count);
 }
 
-TEST_F(instruction_building, generate_addi) {
+TEST_F(instruction_generator, generate_addi) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::add_generator::generate_addi(_instructions);
@@ -28,7 +28,7 @@ TEST_F(instruction_building, generate_addi) {
     ASSERT_EQ(after - before, addi_count);
 }
 
-TEST_F(instruction_building, generate_addq) {
+TEST_F(instruction_generator, generate_addq) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::add_generator::generate_addq(_instructions);
@@ -36,7 +36,7 @@ TEST_F(instruction_building, generate_addq) {
     ASSERT_EQ(after - before, addq_count);
 }
 
-TEST_F(instruction_building, generate_addx) {
+TEST_F(instruction_generator, generate_addx) {
     clean_instructions();
     const counter_t before = instructions_count();
     cpu::instructions::generate::add_generator::generate_addx(_instructions);

@@ -18,6 +18,7 @@
 
 #include "instructions.h"
 
+#include "generate/swap_generator.h"
 
 
 namespace cpu::instructions {
@@ -59,6 +60,7 @@ namespace cpu::instructions {
         generate::sub_generator::generate_subi(instructions);
         generate::sub_generator::generate_subq(instructions);
         generate::sub_generator::generate_subx(instructions);
+        generate::swap_generator::generate_swap(instructions);
     }
 
 }
