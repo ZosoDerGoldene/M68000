@@ -12,6 +12,7 @@
 #include "asx_handler.h"
 #include "bcc_handler.h"
 #include "bcd_handler.h"
+#include "clr_handler.h"
 #include "cmp_handler.h"
 #include "eor_handler.h"
 #include "lea_handler.h"
@@ -40,7 +41,8 @@ namespace cpu::instructions::execute {
             || std::is_same_v<rox_ea_handler<true, false>, handler>
             || std::is_same_v<rox_ea_handler<false, false>, handler>
             || std::is_same_v<rox_ea_handler<true, true>, handler>
-            || std::is_same_v<rox_ea_handler<false, true>, handler>;
+            || std::is_same_v<rox_ea_handler<false, true>, handler>
+            || std::is_same_v<clr_handler, handler>;
 
         template<typename handler>
         constexpr bool reads_destination =
@@ -72,6 +74,7 @@ namespace cpu::instructions::execute {
             // //std::is_same_v<bset_i_handler, handler> ||
             || std::is_same_v<ori_handler, handler>
             //  || std::is_same_v<btst_i_handler, handler>
+            || std::is_same_v<clr_handler, handler>
             || std::is_same_v<subi_handler, handler>
             || std::is_same_v<cmpi_handler, handler>;
 

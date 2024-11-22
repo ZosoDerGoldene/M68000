@@ -53,6 +53,7 @@ namespace cpu::instructions::generate {
                     container_t values = container_t();
                     get_indices<handler, dst_mode, container_t>(base_opcode, values);
                     for (size_t i = 0; i < values.size(); i++) {
+                        assert(instructions[values[i]] == nullptr);
                         instructions[values[i]] = static_cast<instruction_fn>(instructions::execution_wrapper<handler,
                             dst_t, dst_mode>);
                     }

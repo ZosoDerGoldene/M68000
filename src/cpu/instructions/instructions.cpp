@@ -6,6 +6,7 @@
 #include "generate/and_generator.h"
 #include "generate/bcc_generator.h"
 #include "generate/bcd_generator.h"
+#include "generate/clr_generator.h"
 #include "generate/cmp_generator.h"
 #include "generate/eor_generator.h"
 #include "generate/lea_generator.h"
@@ -31,6 +32,7 @@ namespace cpu::instructions {
         generate::and_generator::generate_andi2ccr(instructions);
         generate::asx_generator::generate_asx(instructions);
         generate::bcc_generator::generate_bcc(instructions);
+        generate::clr_generator::generate_clr(instructions);
         generate::cmp_generator::generate_cmp(instructions);
         generate::cmp_generator::generate_cmpa(instructions);
         generate::cmp_generator::generate_cmpi(instructions);
