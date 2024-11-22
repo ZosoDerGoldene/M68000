@@ -12,6 +12,7 @@
 #include "asx_handler.h"
 #include "bcc_handler.h"
 #include "bcd_handler.h"
+#include "cmp_handler.h"
 #include "eor_handler.h"
 #include "lea_handler.h"
 #include "lsx_handler.h"
@@ -48,8 +49,11 @@ namespace cpu::instructions::execute {
         template<typename handler>
         constexpr bool writes_destination =
         !(std::is_same_v<andi2ccr_handler, handler> || std::is_same_v<ori2ccr_handler, handler>
-        ||    std::is_same_v<eori2ccr_handler, handler>
-        ||         std::is_same_v<bcc_handler, handler> || std::is_same_v<bsr_handler, handler>);
+        || std::is_same_v<eori2ccr_handler, handler>
+        || std::is_same_v<cmp_handler, handler>
+        || std::is_same_v<cmpa_handler, handler>
+        || std::is_same_v<cmpi_handler, handler>
+        || std::is_same_v<bcc_handler, handler> || std::is_same_v<bsr_handler, handler>);
 
         template<typename handler>
         constexpr bool ignores_source = std::is_same_v<moveq_handler, handler>;
@@ -67,7 +71,8 @@ namespace cpu::instructions::execute {
             // //std::is_same_v<bset_i_handler, handler> ||
             || std::is_same_v<ori_handler, handler>
             //  || std::is_same_v<btst_i_handler, handler>
-            || std::is_same_v<subi_handler, handler>;
+            || std::is_same_v<subi_handler, handler>
+            || std::is_same_v<cmpi_handler, handler>;
 
         template<typename handler>
         constexpr bool is_bit_instruction = false;

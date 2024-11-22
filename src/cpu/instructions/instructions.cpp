@@ -15,6 +15,8 @@
 
 #include "instructions.h"
 
+#include "generate/cmp_generator.h"
+
 
 namespace cpu::instructions {
     void instructions::generate_instructions(instructions_t &instructions) {
@@ -50,6 +52,9 @@ namespace cpu::instructions {
         generate::sub_generator::generate_subi(instructions);
         generate::sub_generator::generate_subq(instructions);
         generate::sub_generator::generate_subx(instructions);
+        generate::cmp_generator::generate_cmp(instructions);
+        generate::cmp_generator::generate_cmpa(instructions);
+        generate::cmp_generator::generate_cmpi(instructions);
     }
 
 }
